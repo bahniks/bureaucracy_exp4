@@ -7,11 +7,18 @@
         padding: 0px;
         overflow: hidden;
       }
+
+      script {
+        display: none;
+      }
     </style>
   </head>
   <body>
     <canvas id="myCanvas"></canvas>
+    {% csrf_token %}
     <script>
+      const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
       window.requestAnimFrame = (function(callback) {
         return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
         function(callback) {
@@ -63,7 +70,34 @@
         currentObject.x = newX;
         
         if(newX > canvas.width + vSize / 2) {
-          newTrial();
+          date = new Date();
+          saveData({
+            "order": trial,  
+            "time_screen": date.getTime() - currentObject.time,
+            "time_previous": "NA", // finish!
+            "shape": currentObject.shape,
+            "color": currentObject.color,  
+            "bribe": currentObject.bribe,
+            "response_shape": "NA",
+            "response_color": "NA",
+            "correct_shape": false,
+            "correct_color": false,
+            "charity_total": charity,
+            "reward_total": reward,
+            "response_number": "NA",
+            "color1": potColors[0],
+            "color2": potColors[1],
+            "color3": potColors[2],
+            "shape1": potShapes[0],
+            "shape2": potShapes[1],
+            "shape3": potShapes[2],    
+            "condition": condition,
+            "lastTrial": trial == totalTrials,
+          });
+          if(trial <= totalTrials) {
+            newTrial();
+            return;
+          }
         }
 
         // clear
@@ -77,10 +111,12 @@
         createPots();
         createInfo();
 
-        // request new frame
-        requestAnimFrame(function() {
-          animate(time);
-        });
+        if(trial <= totalTrials) {
+          // request new frame
+          requestAnimFrame(function() {
+            animate(time);
+          });
+        }
       }
 
       function shuffle(a) {
@@ -139,6 +175,7 @@
         } else {
           var bribe = 0;
         }
+        var date = new Date();
         var object = {
             x: -2*vSize,
             y: window.innerHeight/2,
@@ -147,6 +184,7 @@
             size: vSize,
             fun: shapeFunctions[shape],
             bribe: bribe,
+            time: date.getTime(),
         };
         return object;
       }
@@ -172,32 +210,91 @@
 
       document.addEventListener('keydown', function(event) {
         if(["1", "2", "3"].includes(event.key)) {
-          // shape correct
+          // if shape is correct
           if(currentObject.shape == potShapes[parseInt(event.key)-1]) {
             reward += currentObject.bribe;
           }          
-          // color NOT correct
+          // if color is NOT correct
           if(currentObject.color != potColors[parseInt(event.key)-1]) {
             charity -= charityLoss;
           }      
           reward += 3;
-          newTrial();
+          date = new Date();
+          saveData({
+            "order": trial,  
+            "time_screen": date.getTime() - currentObject.time,
+            "time_previous": "NA", // finish!
+            "shape": currentObject.shape,
+            "color": currentObject.color,  
+            "bribe": currentObject.bribe,
+            "response_shape": potShapes[parseInt(event.key)-1],
+            "response_color": potColors[parseInt(event.key)-1],
+            "correct_shape": potShapes[parseInt(event.key)-1] == currentObject.shape,
+            "correct_color": potColors[parseInt(event.key)-1] == currentObject.color,
+            "charity_total": charity,
+            "reward_total": reward,
+            "response_number": event.key,
+            "color1": potColors[0],
+            "color2": potColors[1],
+            "color3": potColors[2],
+            "shape1": potShapes[0],
+            "shape2": potShapes[1],
+            "shape3": potShapes[2],    
+            "condition": condition,
+            "lastTrial": trial == totalTrials,
+          });
+          if(trial <= totalTrials) {
+            newTrial();
+          }
         };
       });
 
       function newTrial() {
+        if(trial == totalTrials) {
+          window.location.href = window.location.href;
+          return;
+        }
         trial++;
+        if(trial > halfTrials) {
+          if(condition == "small_first") {
+            bribeSizes = bribeSizesAll.slice(3, 6);
+          } else if(condition == "bigfirst") {
+            bribeSizes = bribeSizesAll.slice(0, 3);
+          }
+        }
         changePotsColors();
         currentObject = createObject(); 
       }
 
+      function saveData(data) {
+        fetch(window.location.href, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+          },
+          body: JSON.stringify(data),
+        })
+      };
+
       // settings
-      const totalTrials = 200;
+      const totalTrials = 2;
+      const halfTrials = totalTrials / 2;
       const initialCharity = 2000;
       const bribeProbability = 0.2;
-      const bribeSizes = [40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190];
+      const bribeSizesAll = [20, 50, 80, 110, 140, 170];
       const charityLoss = 200;
       const speed = 3;
+
+      // condition
+      const condition = sample(["small_first", "control", "big_first"]);
+      if(condition == "small_first") {
+        var bribeSizes = bribeSizesAll.slice(0, 3);
+      } else if(condition == "bigfirst") {
+        var bribeSizes = bribeSizesAll.slice(3, 6);
+      } else {
+        var bribeSizes = bribeSizesAll;
+      }
 
       // current state
       var reward = 0;
@@ -212,6 +309,8 @@
       var date = new Date();
       animate(date.getTime());
 
+
+      // canvas.addEventListener('contextmenu', event => event.preventDefault());
 
       window.addEventListener("resize", function () {
         init();

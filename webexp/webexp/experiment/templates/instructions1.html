@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block body %}
+    <div class="main">
+        <p>
+            V této úloze můžete pro sebe a pro vybranou charitu získávat nebo ztrácet body, jež se na konci experimentu převedou na peníze dle kurzu 10 bodů = 1 Kč.
+            <h1>Ovládání</h1>
+            Vaším úkolem bude třídit obrázky objevující se na obrazovce dle BARVY.
+        <br><br>
+            Každý obrázek lze stisknutím klávesy 1, 2 a 3 na numerické klávesnici zatřídit k jedné barvě a k jednomu tvaru. Jaká barva a jaký tvar jsou právě spojeny s klávesami 1, 2 a 3 můžete vidět v dolní části obrazovky. Například teď v dolním řádku vidíte, že s klávesou 1 je nyní spojena oranžová barva a trojúhelníkový tvar. Pokud by se teď na obrazovce objevil obrázek a vy byste stiskl(a) klávesu 1, zatřídíte tento obrázek k oranžové barvě a trojúhelníkovému tvaru.
+        <br><br>
+            Obrázky mohou mít modrou, oranžovou nebo žlutou barvu a tvar kruhu, trojúhelníku nebo čtverce.
+        <br><br>
+            Během úlohy bude v dolní části obrazovky vždy vidět, jaká barva a jaký tvar jsou právě spojeny s klávesami 1, 2 a 3. 
+            Pozor – po zatřídění každého obrázku se spojení barev a kláves změní, musíte je proto pozorně sledovat.
+        <br><br>
+            Po kliknutí na Pokračovat se dostanete k další části instrukcí.
+        <br>
+        </p>      
+        <form method="POST">
+            {% csrf_token %}
+            <input type="submit" name="continue" value="Pokračovat">
+        </form>
+    </div>
+{% endblock %}
+
+

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <div class="main">
+        <p>
+            V následující úloze máte možnost získat peníze pro sebe a pro charitativní organizaci dle vašeho výběru. 
+            Na výběr máte z následujících čtyř charitativních organizací:
+        </p>      
+        <form method="POST">
+            {% csrf_token %}
+            <div>
+                <input type="radio" name="charity" value="red_cross">
+                <label for="red_cross" class="radio-label">Červený kříž</label>
+                <p class="radio-description">
+                    Chrání životy, zdraví, důstojnost a snižuje utrpení lidí v nouzi následkem válek, přírodních nebo technických katastrof a epidemií.
+                </p>      
+            </div>    
+            <br>
+            <div>
+                <input type="radio" name="charity" value="people_in_need">
+                <label for="people_in_need" class="radio-label">Člověk v tísni</label>
+                <p class="radio-description">
+                    Poskytuje okamžitou humanitární pomoc a pomáhá lidem postavit se na vlastní nohy. Podporuje vzdělávání dětí, pomáhá nejchudším a nejzranitelnějším, podporuje obránce lidských práv.
+                </p>
+            </div>
+            <br>           
+
+            <input type="submit" name="continue" value="Pokračovat" class="horizontal-center">
+        </form>
+    </div>
+{% endblock %}
+

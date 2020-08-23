@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="main">
+    <p>
+        Zde uvedte sve jmeno:
+    </p>      
+    <form method="POST">
+        {% csrf_token %}
+        <input id="example" type="text" name="text">
+        <input type="submit" name="continue" value="Pokračovat">
+    </form>
+</div>
+{% endblock %}
+
+

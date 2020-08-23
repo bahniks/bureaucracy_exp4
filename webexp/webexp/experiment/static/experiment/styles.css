@@ -1,26 +1,53 @@
+* {
+    font-size: x-large;
+}
+
 p {
     text-align: left;
-    font-size: x-large;
     word-wrap: break-word;
-    max-width: 800px;
     display: inline-block;
 }
 
-div {
+div.main {
     display: inline-block;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: fit-content;
-}
-
-input {
-    font-size: x-large;
+    max-width: 800px;
 }
 
 form {
     margin-left: auto;
     margin-right: auto;
     width: fit-content;
+}
+
+.radio-label {
+    padding: 5x;
+    width: 150px;
+    display: inline-block;
+}
+
+.radio-description {
+    vertical-align: top;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    max-width: 570px;
+}
+
+.horizontal-center {
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0%);
+}
+
+img {
+    padding-bottom: 30px;
+    padding-top: 30px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }

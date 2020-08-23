@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'experiment/styles.css' %}">
-</head>
-<body>
-    <div>
+{% extends "base.html" %}
+{% block body %}
+    <div class="main">
         <p>
             Vítejte na výzkumné studii pořádané ve spolupráci s Fakultou podnikohospodářskou Vysoké školy ekonomické v Praze. Vaším úkolem bude třídit obrázky podle barvy. V tomto úkolu můžete vydělat peníze pro sebe a vámi vybranou charitu.
         </p>      
@@ -17,7 +9,6 @@
             <input type="submit" name="continue" value="Pokračovat">
         </form>
     </div>
-</body>
-</html>
+{% endblock %}
 
 
