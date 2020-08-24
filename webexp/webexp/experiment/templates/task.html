@@ -17,310 +17,312 @@
     <canvas id="myCanvas"></canvas>
     {% csrf_token %}
     <script>
-      const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      (function main() {
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-      window.requestAnimFrame = (function(callback) {
-        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-        function(callback) {
-          window.setTimeout(callback, 1000 / 60);
-        };
-      })();
+        window.requestAnimFrame = (function(callback) {
+          return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+          function(callback) {
+            window.setTimeout(callback, 1000 / 60);
+          };
+        })();
 
-      function init() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        hSize = window.innerWidth / 9;
-        vSize = window.innerHeight / 5;
-        font = Math.round(vSize/5).toString() + "px Helvetica";
-        linearSpeed = speed * hSize;
-      }
+        function init() {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          hSize = window.innerWidth / 9;
+          vSize = window.innerHeight / 5;
+          font = Math.round(vSize/5).toString() + "px Helvetica";
+          linearSpeed = speed * hSize;
+        }
 
-      function drawSquare(square, context) {
-        context.beginPath();
-        context.rect(square.x, square.y - square.size, square.size, square.size);
-        context.fillStyle = square.color;
-        context.fill();
-      }
+        function drawSquare(square, context) {
+          context.beginPath();
+          context.rect(square.x, square.y - square.size, square.size, square.size);
+          context.fillStyle = square.color;
+          context.fill();
+        }
 
-      function drawTriangle(triangle, context) {
-        context.beginPath();
-        context.moveTo(triangle.x, triangle.y);
-        context.lineTo(triangle.x + triangle.size, triangle.y);
-        context.lineTo(triangle.x + triangle.size/2, triangle.y - triangle.size);
-        context.closePath();
-        context.fillStyle = triangle.color;
-        context.fill();
-      }
+        function drawTriangle(triangle, context) {
+          context.beginPath();
+          context.moveTo(triangle.x, triangle.y);
+          context.lineTo(triangle.x + triangle.size, triangle.y);
+          context.lineTo(triangle.x + triangle.size/2, triangle.y - triangle.size);
+          context.closePath();
+          context.fillStyle = triangle.color;
+          context.fill();
+        }
 
-      function drawCircle(circle, context) {
-        context.beginPath();
-        context.arc(circle.x+circle.size/2, circle.y-circle.size/2, circle.size/2, 0, 2 * Math.PI);
-        context.closePath();
-        context.fillStyle = circle.color;
-        context.fill();
-      }
+        function drawCircle(circle, context) {
+          context.beginPath();
+          context.arc(circle.x+circle.size/2, circle.y-circle.size/2, circle.size/2, 0, 2 * Math.PI);
+          context.closePath();
+          context.fillStyle = circle.color;
+          context.fill();
+        }
 
-      function animate(lastTime) {
-        var time = (new Date()).getTime();
-        var timeDiff = time - lastTime;
+        function animate(lastTime) {
+          var time = (new Date()).getTime();
+          var timeDiff = time - lastTime;
 
-        // pixels / second
-        var linearDistEachFrame = linearSpeed * timeDiff / 1000;
-        var newX = currentObject.x + linearDistEachFrame;
-        currentObject.x = newX;
-        
-        if(newX > canvas.width + vSize / 2) {
-          date = new Date();
-          saveData({
-            "order": trial,  
-            "time_screen": date.getTime() - currentObject.time,
-            "time_previous": "NA", // finish!
-            "shape": currentObject.shape,
-            "color": currentObject.color,  
-            "bribe": currentObject.bribe,
-            "response_shape": "NA",
-            "response_color": "NA",
-            "correct_shape": false,
-            "correct_color": false,
-            "charity_total": charity,
-            "reward_total": reward,
-            "response_number": "NA",
-            "color1": potColors[0],
-            "color2": potColors[1],
-            "color3": potColors[2],
-            "shape1": potShapes[0],
-            "shape2": potShapes[1],
-            "shape3": potShapes[2],    
-            "condition": condition,
-            "lastTrial": trial == totalTrials,
-          });
+          // pixels / second
+          var linearDistEachFrame = linearSpeed * timeDiff / 1000;
+          var newX = currentObject.x + linearDistEachFrame;
+          currentObject.x = newX;
+          
+          if(newX > canvas.width + vSize / 2) {
+            date = new Date();
+            saveData({
+              "order": trial,  
+              "time_screen": date.getTime() - currentObject.time,
+              "shape": currentObject.shape,
+              "color": currentObject.color,  
+              "bribe": currentObject.bribe,
+              "response_shape": "NA",
+              "response_color": "NA",
+              "correct_shape": false,
+              "correct_color": false,
+              "charity_total": charity,
+              "reward_total": reward,
+              "response_number": "NA",
+              "color1": potColors[0],
+              "color2": potColors[1],
+              "color3": potColors[2],
+              "shape1": potShapes[0],
+              "shape2": potShapes[1],
+              "shape3": potShapes[2],    
+              "condition": condition,
+              "lastTrial": trial == totalTrials,
+            });
+            if(trial <= totalTrials) {
+              newTrial();
+            } else {
+              return;
+            }
+          }
+
+          // clear
+          context.clearRect(0, 0, canvas.width, canvas.height);
+
+          // draw
+          currentObject.fun(currentObject, context);
+          if(currentObject.bribe != 0) {
+            createBribe(currentObject.bribe, newX, currentObject.y);
+          }
+          createPots();
+          createInfo();
+
           if(trial <= totalTrials) {
-            newTrial();
-            return;
+            // request new frame
+            requestAnimFrame(function() {
+              animate(time);
+            });
           }
         }
 
-        // clear
-        context.clearRect(0, 0, canvas.width, canvas.height);
-
-        // draw
-        currentObject.fun(currentObject, context);
-        if(currentObject.bribe != 0) {
-          createBribe(currentObject.bribe, newX, currentObject.y);
+        function shuffle(a) {
+          var j, x, i;
+          for (i = a.length - 1; i > 0; i--) {
+              j = Math.floor(Math.random() * (i + 1));
+              x = a[i];
+              a[i] = a[j];
+              a[j] = x;
+          }
+          return a;
         }
-        createPots();
-        createInfo();
 
-        if(trial <= totalTrials) {
-          // request new frame
-          requestAnimFrame(function() {
-            animate(time);
-          });
+        function sample(a) {
+          return a[Math.floor(Math.random() * a.length)];
         }
-      }
 
-      function shuffle(a) {
-        var j, x, i;
-        for (i = a.length - 1; i > 0; i--) {
-            j = Math.floor(Math.random() * (i + 1));
-            x = a[i];
-            a[i] = a[j];
-            a[j] = x;
+        const shapes = ["triangle", "circle", "square"];
+        const colors = ["yellow", "orange", "skyblue"];
+        const shapeFunctions = {
+          triangle: drawTriangle,
+          circle: drawCircle,
+          square: drawSquare,
+        };
+
+        var potShapes = shuffle(shapes);
+        var potColors = shuffle(colors);
+
+        function createPots() {
+          for (i = 0; i < 3; i++) {
+            fun = shapeFunctions[potShapes[i]];
+            var x = (i+1)*window.innerWidth/4 - vSize/2;
+            fun({
+              x: x,
+              y: window.innerHeight - 100,
+              size: vSize,
+              color: potColors[i],
+            }, context);
+            context.font = font;
+            context.fillStyle = "black";
+            context.textAlign = "center";
+            context.fillText(i + 1, x + vSize/2, window.innerHeight - 50);
+          }
         }
-        return a;
-      }
 
-      function sample(a) {
-        return a[Math.floor(Math.random() * a.length)];
-      }
+        function changePotsColors() {
+          potColors = shuffle(colors);
+          createPots();
+        }
 
-      const shapes = ["triangle", "circle", "square"];
-      const colors = ["yellow", "orange", "skyblue"];
-      const shapeFunctions = {
-        triangle: drawTriangle,
-        circle: drawCircle,
-        square: drawSquare,
-      };
+        function createObject() {
+          var shape = sample(shapes);
+          var color = sample(colors);
+          var congruent = potShapes[potColors.indexOf(color)] == shape;
+          if(Math.random() < bribeProbability && !congruent) {
+            var bribe = sample(bribeSizes);
+          } else {
+            var bribe = 0;
+          }
+          var date = new Date();
+          var object = {
+              x: -2*vSize,
+              y: window.innerHeight/2,
+              color: color,
+              shape: shape,
+              size: vSize,
+              fun: shapeFunctions[shape],
+              bribe: bribe,
+              time: date.getTime(),
+          };
+          return object;
+        }
 
-      var potShapes = shuffle(shapes);
-      var potColors = shuffle(colors);
-
-      function createPots() {
-        for (i = 0; i < 3; i++) {
-          fun = shapeFunctions[potShapes[i]];
-          var x = (i+1)*window.innerWidth/4 - vSize/2;
-          fun({
-            x: x,
-            y: window.innerHeight - 100,
-            size: vSize,
-            color: potColors[i],
-          }, context);
+        function createBribe(bribe, x, y) {
           context.font = font;
           context.fillStyle = "black";
           context.textAlign = "center";
-          context.fillText(i + 1, x + vSize/2, window.innerHeight - 50);
+          context.textBaseline = "middle";
+          context.fillText(bribe, x + vSize/2, y - vSize/2);
         }
-      }
 
-      function changePotsColors() {
-        potColors = shuffle(colors);
-        createPots();
-      }
+        function createInfo() {
+          context.font = font;
+          context.fillStyle = "black";
+          context.textAlign = "center";
+          context.textBaseline = "middle";
+          context.fillText(trial.toString() + "/" + totalTrials.toString(), window.innerWidth/2, vSize/5);
+          context.textAlign = "right";
+          context.fillText("Charitě: " + charity.toString(), window.innerWidth - hSize/10, vSize/5);
+          context.fillText("Odměna: " + reward.toString(), window.innerWidth - hSize/10, window.innerHeight/2 + vSize/2);
+        }
 
-      function createObject() {
-        var shape = sample(shapes);
-        var color = sample(colors);
-        if(Math.random() < bribeProbability) {
-          var bribe = sample(bribeSizes);
+        document.addEventListener('keydown', function(event) {
+          if(["1", "2", "3"].includes(event.key)) {
+            // if shape is correct
+            if(currentObject.shape == potShapes[parseInt(event.key)-1]) {
+              reward += currentObject.bribe;
+            }          
+            // if color is NOT correct
+            if(currentObject.color != potColors[parseInt(event.key)-1]) {
+              charity -= charityLoss;
+            }      
+            reward += sortReward;
+            date = new Date();
+            saveData({
+              "order": trial,  
+              "time_screen": date.getTime() - currentObject.time,
+              "shape": currentObject.shape,
+              "color": currentObject.color,  
+              "bribe": currentObject.bribe,
+              "response_shape": potShapes[parseInt(event.key)-1],
+              "response_color": potColors[parseInt(event.key)-1],
+              "correct_shape": potShapes[parseInt(event.key)-1] == currentObject.shape,
+              "correct_color": potColors[parseInt(event.key)-1] == currentObject.color,
+              "charity_total": charity,
+              "reward_total": reward,
+              "response_number": event.key,
+              "color1": potColors[0],
+              "color2": potColors[1],
+              "color3": potColors[2],
+              "shape1": potShapes[0],
+              "shape2": potShapes[1],
+              "shape3": potShapes[2],    
+              "condition": condition,
+              "lastTrial": trial == totalTrials,
+            });
+            if(trial <= totalTrials) {
+              newTrial();
+            }
+          };
+        });
+
+        function newTrial() {
+          if(trial == totalTrials) {
+            window.location.href = window.location.href;
+            return;
+          }
+          trial++;
+          if(trial > halfTrials) {
+            if(condition == "small_first") {
+              bribeSizes = bribeSizesAll.slice(3, 6);
+            } else if(condition == "bigfirst") {
+              bribeSizes = bribeSizesAll.slice(0, 3);
+            }
+          }
+          changePotsColors();
+          currentObject = createObject(); 
+        }
+
+        function saveData(data) {
+          fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify(data),
+          })
+        };
+
+        // settings
+        const totalTrials = 20;
+        const halfTrials = totalTrials / 2;
+        const initialCharity = 2000;
+        const bribeProbability = 0.225;
+        const bribeSizesAll = [20, 50, 80, 110, 140, 170];
+        const charityLoss = 200;
+        const speed = 3;
+        const sortReward = 3;
+
+        // condition
+        const condition = sample(["small_first", "control", "big_first"]);
+        if(condition == "small_first") {
+          var bribeSizes = bribeSizesAll.slice(0, 3);
+        } else if(condition == "bigfirst") {
+          var bribeSizes = bribeSizesAll.slice(3, 6);
         } else {
-          var bribe = 0;
+          var bribeSizes = bribeSizesAll;
         }
-        var date = new Date();
-        var object = {
-            x: -2*vSize,
-            y: window.innerHeight/2,
-            color: color,
-            shape: shape,
-            size: vSize,
-            fun: shapeFunctions[shape],
-            bribe: bribe,
-            time: date.getTime(),
-        };
-        return object;
-      }
 
-      function createBribe(bribe, x, y) {
-        context.font = font;
-        context.fillStyle = "black";
-        context.textAlign = "center";
-        context.textBaseline = "middle";
-        context.fillText(bribe, x + vSize/2, y - vSize/2);
-      }
+        // current state
+        var reward = 0;
+        var trial = 1;
+        var charity = initialCharity;
 
-      function createInfo() {
-        context.font = font;
-        context.fillStyle = "black";
-        context.textAlign = "center";
-        context.textBaseline = "middle";
-        context.fillText(trial.toString() + "/" + totalTrials.toString(), window.innerWidth/2, vSize/5);
-        context.textAlign = "right";
-        context.fillText("Charitě: " + charity.toString(), window.innerWidth - hSize/10, vSize/5);
-        context.fillText("Odměna: " + reward.toString(), window.innerWidth - hSize/10, window.innerHeight/2 + vSize/2);
-      }
-
-      document.addEventListener('keydown', function(event) {
-        if(["1", "2", "3"].includes(event.key)) {
-          // if shape is correct
-          if(currentObject.shape == potShapes[parseInt(event.key)-1]) {
-            reward += currentObject.bribe;
-          }          
-          // if color is NOT correct
-          if(currentObject.color != potColors[parseInt(event.key)-1]) {
-            charity -= charityLoss;
-          }      
-          reward += 3;
-          date = new Date();
-          saveData({
-            "order": trial,  
-            "time_screen": date.getTime() - currentObject.time,
-            "time_previous": "NA", // finish!
-            "shape": currentObject.shape,
-            "color": currentObject.color,  
-            "bribe": currentObject.bribe,
-            "response_shape": potShapes[parseInt(event.key)-1],
-            "response_color": potColors[parseInt(event.key)-1],
-            "correct_shape": potShapes[parseInt(event.key)-1] == currentObject.shape,
-            "correct_color": potColors[parseInt(event.key)-1] == currentObject.color,
-            "charity_total": charity,
-            "reward_total": reward,
-            "response_number": event.key,
-            "color1": potColors[0],
-            "color2": potColors[1],
-            "color3": potColors[2],
-            "shape1": potShapes[0],
-            "shape2": potShapes[1],
-            "shape3": potShapes[2],    
-            "condition": condition,
-            "lastTrial": trial == totalTrials,
-          });
-          if(trial <= totalTrials) {
-            newTrial();
-          }
-        };
-      });
-
-      function newTrial() {
-        if(trial == totalTrials) {
-          window.location.href = window.location.href;
-          return;
-        }
-        trial++;
-        if(trial > halfTrials) {
-          if(condition == "small_first") {
-            bribeSizes = bribeSizesAll.slice(3, 6);
-          } else if(condition == "bigfirst") {
-            bribeSizes = bribeSizesAll.slice(0, 3);
-          }
-        }
-        changePotsColors();
-        currentObject = createObject(); 
-      }
-
-      function saveData(data) {
-        fetch(window.location.href, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrftoken,
-          },
-          body: JSON.stringify(data),
-        })
-      };
-
-      // settings
-      const totalTrials = 2;
-      const halfTrials = totalTrials / 2;
-      const initialCharity = 2000;
-      const bribeProbability = 0.2;
-      const bribeSizesAll = [20, 50, 80, 110, 140, 170];
-      const charityLoss = 200;
-      const speed = 3;
-
-      // condition
-      const condition = sample(["small_first", "control", "big_first"]);
-      if(condition == "small_first") {
-        var bribeSizes = bribeSizesAll.slice(0, 3);
-      } else if(condition == "bigfirst") {
-        var bribeSizes = bribeSizesAll.slice(3, 6);
-      } else {
-        var bribeSizes = bribeSizesAll;
-      }
-
-      // current state
-      var reward = 0;
-      var trial = 1;
-      var charity = initialCharity;
-
-      var canvas = document.getElementById('myCanvas');
-      var context = canvas.getContext('2d');      
-      init();
-      createPots();
-      var currentObject = createObject();           
-      var date = new Date();
-      animate(date.getTime());
-
-
-      // canvas.addEventListener('contextmenu', event => event.preventDefault());
-
-      window.addEventListener("resize", function () {
+        var canvas = document.getElementById('myCanvas');
+        var context = canvas.getContext('2d');      
         init();
-        if(window.innerWidth < 800 | window.innerHeight < 500) {
-          alert("Window is too small!"); // stop the task
-        }
-        currentObject.y = window.innerHeight/2;
-        currentObject.size = vSize;
-      });
+        createPots();
+        var currentObject = createObject();           
+        var date = new Date();
+        animate(date.getTime());
 
+
+        canvas.addEventListener('contextmenu', event => event.preventDefault());
+
+        window.addEventListener("resize", function () {
+          init();
+          if(window.innerWidth < 800 | window.innerHeight < 500) {
+            alert("Window is too small!"); // stop the task
+          }
+          currentObject.y = window.innerHeight/2;
+          currentObject.size = vSize;
+        });
+      })();
     </script>
   </body>
 </html>      

@@ -4,6 +4,10 @@ from django.db import models
 class Participant(models.Model):
     participant_id = models.CharField(max_length=50)
     charity = models.CharField(max_length=50, default="NA")
+    reward = models.CharField(max_length=10, default="NA")
+    charity_reward = models.CharField(max_length=10, default="NA")
+    bank_account = models.CharField(max_length=50, default="NA")
+
     def __str__(self):
         return self.participant_id
 
@@ -12,7 +16,6 @@ class Trial(models.Model):
     participant_id = models.CharField(max_length=50)
     order = models.CharField(max_length=3)	
     time_screen = models.CharField(max_length=50)	
-    time_previous = models.CharField(max_length=50)
     shape = models.CharField(max_length=10)	
     color = models.CharField(max_length=10)	
     bribe = models.CharField(max_length=6)	
