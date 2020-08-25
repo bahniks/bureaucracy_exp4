@@ -6,9 +6,53 @@
         </p>      
         <form method="POST">
             {% csrf_token %}
-            <input type="submit" name="continue" value="Pokračovat">
+            <input type="submit" name="continue" value="Pokračovat" id="continue" disabled>
         </form>
+        <p id="problem" height="200px" class="horizontal-center">
+        </p>
     </div>
+    <script>
+        function detectMobile() {
+            const toMatch = [
+                /Android/i,
+                /webOS/i,
+                /iPhone/i,
+                /iPad/i,
+                /iPod/i,
+                /BlackBerry/i,
+                /Windows Phone/i
+            ];
+            return toMatch.some((toMatchItem) => {
+                return navigator.userAgent.match(toMatchItem);
+            });
+        }
+
+        function smallScreen() {
+            return ( ( window.innerWidth <= 1000 ) || ( window.innerHeight <= 700 ) );
+        }
+
+        function isIE() {
+            var ua = window.navigator.userAgent;
+            return /MSIE|Trident/.test(ua);
+        }
+        
+        if(detectMobile()) {
+            document.getElementById("problem").innerHTML = "Experiment nelze spustit na mobilním zařízení!";
+        } else if(smallScreen()) {
+            document.getElementById("problem").innerHTML = "Experiment vyžaduje velikost okna alespoň 1000x700 pixelů!";
+        } else if(isIE()) {
+            document.getElementById("problem").innerHTML = "Experiment nelze spustit v prohlížeči Internet Explorer!";
+        } else {
+            document.getElementById("continue").disabled = false;
+        }
+
+        window.addEventListener("resize", function () {
+            if(!smallScreen()) {
+                document.getElementById("continue").disabled = false;
+            }
+        });
+
+    </script>
 {% endblock %}
 
 

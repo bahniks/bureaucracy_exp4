@@ -9,7 +9,7 @@ from collections import namedtuple
 import re
 import json
 
-Frame = namedtuple("Frame", ["template", "function"])
+Frame = namedtuple("Frame", ["template", "function", "context"])
 
 count = -1
 participantId = ""
@@ -18,13 +18,13 @@ context = {}
 def manager(request):
     # manager function
     global context
-    context = {}
     global count
     if request.method == 'POST':
         if sequence[count].function(request):
             # do not proceed to the next frame if returns True
             count -= 1
     count += 1
+    context = sequence[count].context
     template = loader.get_template('{}.html'.format(sequence[count].template))
     return HttpResponse(template.render(context, request))
 
@@ -112,15 +112,16 @@ def intro(request):
 
 
 sequence = [
-    Frame("intro", intro),
-    Frame("validator", validate),
-    Frame("charity", charity),
-    Frame("instructions1", intro),
-    Frame("instructions4", intro),
-    Frame("task", task),
-    Frame("account", account)
+    Frame("intro", intro, {}),
+    Frame("validator", validate, {}),
+    Frame("charity", charity, {}),
+    Frame("instructions1", intro, {}),
+    Frame("instructions4", intro, {}),
+    Frame("task", task, {"practice": 1}),
+    Frame("task", task, {"practice": 0}),
+    Frame("account", account, {})
     ]
 
-sequence = [Frame("validator", validate), Frame("account", account)] * 50
+sequence = [Frame("task", task, {"practice": 0})] * 50
 
 

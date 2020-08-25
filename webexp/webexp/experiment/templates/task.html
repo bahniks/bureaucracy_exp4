@@ -20,12 +20,10 @@
       (function main() {
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-        window.requestAnimFrame = (function(callback) {
-          return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-          function(callback) {
-            window.setTimeout(callback, 1000 / 60);
-          };
-        })();
+
+        window.requestAnimFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame
+        window.cancelAnimFrame = window.cancelAnimationFrame || window.webkitCancelRequestAnimationFrame || window.webkitCancelAnimationFrame ||window.mozCancelRequestAnimationFrame || 
+                                 window.mozCancelAnimationFrame || window.oCancelRequestAnimationFrame || window.oCancelAnimationFrame || window.msCancelRequestAnimationFrame || window.msCancelAnimationFrame;
 
         function init() {
           canvas.width = window.innerWidth;
@@ -61,9 +59,16 @@
           context.fill();
         }
 
-        function animate(lastTime) {
-          var time = (new Date()).getTime();
-          var timeDiff = time - lastTime;
+        let animationRequest;
+        let lastTime;
+        var cumTime = 0;
+        function animate(time) {
+          if (lastTime === undefined) {
+            lastTime = time;
+          }
+          const timeDiff = time - lastTime;
+          lastTime = time;
+          cumTime += timeDiff;
 
           // pixels / second
           var linearDistEachFrame = linearSpeed * timeDiff / 1000;
@@ -74,7 +79,7 @@
             date = new Date();
             saveData({
               "order": trial,  
-              "time_screen": date.getTime() - currentObject.time,
+              "time_screen": cumTime, //date.getTime() - currentObject.time,
               "shape": currentObject.shape,
               "color": currentObject.color,  
               "bribe": currentObject.bribe,
@@ -112,11 +117,9 @@
           createPots();
           createInfo();
 
-          if(trial <= totalTrials) {
+          if(!paused && trial <= totalTrials) {
             // request new frame
-            requestAnimFrame(function() {
-              animate(time);
-            });
+            animationRequest = window.requestAnimFrame(animate);
           }
         }
 
@@ -192,6 +195,9 @@
         }
 
         function createBribe(bribe, x, y) {
+          if(isPractice) {
+            return;
+          }
           context.font = font;
           context.fillStyle = "black";
           context.textAlign = "center";
@@ -205,6 +211,16 @@
           context.textAlign = "center";
           context.textBaseline = "middle";
           context.fillText(trial.toString() + "/" + totalTrials.toString(), window.innerWidth/2, vSize/5);
+          if(isPractice) {
+            if(previousCorrect != null) {
+              if(previousCorrect) {
+                context.fillText("Předchozí objekt byl zařazen SPRÁVNĚ.", window.innerWidth/2, window.innerHeight/2 + vSize/2);
+              } else {
+                context.fillText("Předchozí objekt byl zařazen CHYBNĚ.", window.innerWidth/2, window.innerHeight/2 + vSize/2);
+              }
+            }
+            return;
+          }
           context.textAlign = "right";
           context.fillText("Charitě: " + charity.toString(), window.innerWidth - hSize/10, vSize/5);
           context.fillText("Odměna: " + reward.toString(), window.innerWidth - hSize/10, window.innerHeight/2 + vSize/2);
@@ -215,16 +231,22 @@
             // if shape is correct
             if(currentObject.shape == potShapes[parseInt(event.key)-1]) {
               reward += currentObject.bribe;
+              if(isPractice) {
+                previousCorrect = true;
+              }
             }          
             // if color is NOT correct
             if(currentObject.color != potColors[parseInt(event.key)-1]) {
               charity -= charityLoss;
+              if(isPractice) {
+                previousCorrect = false;
+              }
             }      
             reward += sortReward;
             date = new Date();
             saveData({
               "order": trial,  
-              "time_screen": date.getTime() - currentObject.time,
+              "time_screen": cumTime, // date.getTime() - currentObject.time,
               "shape": currentObject.shape,
               "color": currentObject.color,  
               "bribe": currentObject.bribe,
@@ -265,9 +287,13 @@
           }
           changePotsColors();
           currentObject = createObject(); 
+          cumTime = 0;
         }
 
         function saveData(data) {
+          if(isPractice) {
+            return;
+          }
           fetch(window.location.href, {
             method: 'POST',
             headers: {
@@ -279,14 +305,19 @@
         };
 
         // settings
-        const totalTrials = 20;
-        const halfTrials = totalTrials / 2;
         const initialCharity = 2000;
         const bribeProbability = 0.225;
         const bribeSizesAll = [20, 50, 80, 110, 140, 170];
         const charityLoss = 200;
         const speed = 3;
         const sortReward = 3;
+        const isPractice = parseInt("{{practice}}");
+        if(isPractice) {
+          var totalTrials = 6;
+        } else {
+          var totalTrials = 20;
+        }
+        const halfTrials = totalTrials / 2;
 
         // condition
         const condition = sample(["small_first", "control", "big_first"]);
@@ -302,26 +333,47 @@
         var reward = 0;
         var trial = 1;
         var charity = initialCharity;
+        var previousCorrect = null;
+        var paused = false;
 
+        // initialization
         var canvas = document.getElementById('myCanvas');
         var context = canvas.getContext('2d');      
         init();
         createPots();
-        var currentObject = createObject();           
-        var date = new Date();
-        animate(date.getTime());
-
-
+        var currentObject = createObject();                 
+     
+        // disable right click
         canvas.addEventListener('contextmenu', event => event.preventDefault());
 
+        // handling resizing
         window.addEventListener("resize", function () {
           init();
-          if(window.innerWidth < 800 | window.innerHeight < 500) {
+          if(window.innerWidth < 1000 | window.innerHeight < 700) {
             alert("Window is too small!"); // stop the task
           }
           currentObject.y = window.innerHeight/2;
           currentObject.size = vSize;
         });
+
+        // visibility and starting the animation
+        document.addEventListener("visibilitychange", onChange);
+        function onChange() {
+          paused = document.visibilityState == "hidden";
+          if(paused) {
+            window.cancelAnimFrame(animationRequest);
+          } else {
+            lastTime = undefined;
+            window.requestAnimFrame(animate);
+          }          
+        }
+
+        if (document.visibilityState == "visible") {
+          window.requestAnimFrame(animate);
+        } else {
+          paused = true;
+        }
+
       })();
     </script>
   </body>
