@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block body %}
+    <div class="main wide">
+        <p>
+            <h1>Získávání bodů</h1>
+            Množství peněz, které získá charita, závisí na tom, zda budete dodržovat pravidlo třídění, tj. obrázky třídit dle BARVY. Pokud obrázek zatřídíte k jiné barvě, než je barva obrázku, příspěvek se sníží o 200 bodů. Pokud obrázek zatřídíte ke stejné barvě, výše příspěvku pro charitu se nezmění.<br>
+            (Příspěvek má na začátku hodnotu 2000 bodů. Při častém porušování pravidla je možné se dostat i do záporných hodnot – o zápornou sumu se v takovém případě sníží celkový příspěvek věnovaný vybrané charitě za všechny účastníky studie.)
+        <br><br>
+            Vaše odměna je na začátku 0 bodů. Za každý zatříděný obrázek získáte 3 body, bez ohledu na to, zda ho zatřídíte v souladu s pravidlem nebo ne. Pouze pokud obrázek nezatřídíte nijak (tj. nestisknete žádnou klávesu), nezískáte za něj žádné body.
+        <br><br>
+            Některé obrázky mají uvnitř vepsané číslo od 30 do 180. U těchto obrázků vám počítačový program nabízí odměnu za porušení pravidla a zatřídění obrázku dle TVARU. Pokud bude v obrázku vepsané číslo, získáte pro sebe navíc počet bodů odpovídající vepsanému číslu, když budete ignorovat pravidlo o zařazování dle BARVY a obrázek místo toho zatřídíte dle TVARU. Příspěvek na charitu se v tomto případě sníží o 200 bodů. Samozřejmě můžete body navíc ignorovat a obrázek zatřídit k odpovídající barvě.
+        <br><br>
+            Po kliknutí na Pokračovat uvidíte, jak bude vypadat obrazovka během úlohy.
+        <br>
+        </p>      
+        <form method="POST">
+            {% csrf_token %}
+            <input type="submit" name="continue" value="Pokračovat">
+        </form>
+    </div>
+{% endblock %}
+
+

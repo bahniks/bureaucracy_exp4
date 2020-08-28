@@ -9,7 +9,7 @@
         <form method="POST">
             {% csrf_token %}
             <div>
-                <input type="radio" name="charity" value="red_cross">
+                <input type="radio" name="charity" value="red_cross" required>
                 <label for="red_cross" class="radio-label">Červený kříž</label>
                 <p class="radio-description">
                     Chrání životy, zdraví, důstojnost a snižuje utrpení lidí v nouzi následkem válek, přírodních nebo technických katastrof a epidemií.
@@ -17,7 +17,7 @@
             </div>    
             <br>
             <div>
-                <input type="radio" name="charity" value="people_in_need">
+                <input type="radio" name="charity" value="people_in_need" required>
                 <label for="people_in_need" class="radio-label">Člověk v tísni</label>
                 <p class="radio-description">
                     Poskytuje okamžitou humanitární pomoc a pomáhá lidem postavit se na vlastní nohy. Podporuje vzdělávání dětí, pomáhá nejchudším a nejzranitelnějším, podporuje obránce lidských práv.
