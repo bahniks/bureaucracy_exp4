@@ -119,13 +119,13 @@ sequence = [
     Frame("intro", intro, {}),
     Frame("charity", charity, {}),
     Frame("instructions1", intro, {}),
+    Frame("task", task, {"practice": 1}),
     Frame("instructions2", intro, {}),
     Frame("instructions3", intro, {"charity": selectedCharity}),
     Frame("instructions4", intro, {}),
     Frame("instructions5", intro, {}),
     Frame("instructions6", intro, {}),
     Frame("instructions7", intro, {}),
-    Frame("task", task, {"practice": 1}),
     Frame("task", task, {"practice": 0}),
     Frame("account", account, {})
     ]
