@@ -1,7 +1,8 @@
 from django.contrib import admin
 
-from .models import Participant, Trial
+from .models import Participant, Trial, Code
 
 
 admin.site.register(Participant)
 admin.site.register(Trial)
+admin.site.register(Code)

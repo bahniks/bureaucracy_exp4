@@ -96,6 +96,7 @@
               "shape2": potShapes[1],
               "shape3": potShapes[2],    
               "condition": condition,
+              "practice": isPractice,
               "lastTrial": trial == totalTrials,
             });
             if(trial <= totalTrials) {
@@ -263,6 +264,7 @@
               "shape2": potShapes[1],
               "shape3": potShapes[2],    
               "condition": condition,
+              "practice": isPractice,
               "lastTrial": trial == totalTrials,
             });
             if(trial <= totalTrials) {
@@ -296,9 +298,6 @@
         }
 
         function saveData(data) {
-          if(isPractice) {
-            return;
-          }
           fetch(window.location.href, {
             method: 'POST',
             headers: {
@@ -310,7 +309,7 @@
         };
 
         function pauseTask() {
-          if(pauseNumber == totalPauses) {
+          if(pauseNumber == totalPauses && !isPractice) {
             return;
           }
           pauseNumber += 1;
@@ -322,9 +321,11 @@
           context.textAlign = "center";
           context.textBaseline = "middle";
           context.fillText("Experiment znovu spustíte zmáčknutím tlačítka MEZERNÍK.", window.innerWidth/2, window.innerHeight/2 - 60);
-          context.fillText("Toto byla vaše " + pauseNumber.toString() + ". pauza z celkových " + totalPauses.toString() + ".", window.innerWidth/2, window.innerHeight/2 - 20);
-          if(pauseNumber == totalPauses) {
-            context.fillText("Experiment nemůže být již pauzován.", window.innerWidth/2, window.innerHeight/2 + 20);
+          if(!isPractice) {
+            context.fillText("Toto byla vaše " + pauseNumber.toString() + ". pauza z celkových " + totalPauses.toString() + ".", window.innerWidth/2, window.innerHeight/2 - 20);
+            if(pauseNumber == totalPauses) {
+              context.fillText("Experiment nemůže být již pauzován.", window.innerWidth/2, window.innerHeight/2 + 20);
+            }
           }
           if(window.innerWidth < minimumWidth || window.innerHeight < minimumHeight) {
             context.fillText(`Okno experimentu musí mít velikost alespoň ${minimumWidth}x${minimumHeight} pixelů!`, window.innerWidth/2, window.innerHeight/2 + 60);
@@ -362,9 +363,9 @@
         const minimumHeight = 700;
         const minimumWidth = 1000;
         if(isPractice) {
-          var totalTrials = 6;
+          var totalTrials = 2;
         } else {
-          var totalTrials = 20;
+          var totalTrials = 4;
         }
         const halfTrials = totalTrials / 2;
 
@@ -401,7 +402,7 @@
         function resized() {
           if(!paused) {
             if(window.innerWidth < minimumWidth || window.innerHeight < minimumHeight) {
-              if(pauseNumber == totalPauses) {
+              if(pauseNumber == totalPauses && !isPractice) {
                 tooManyBreaks();
               } else {
                 init();
@@ -423,7 +424,7 @@
         document.addEventListener("visibilitychange", onChange);
         function onChange() {
           if(document.visibilityState == "hidden" && !paused) {
-            if(pauseNumber == totalPauses) {
+            if(pauseNumber == totalPauses && !isPractice) {
               tooManyBreaks();
             }
             pauseTask();

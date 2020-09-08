@@ -33,3 +33,8 @@ class Trial(models.Model):
     shape2 = models.CharField(max_length=10)	
     shape3 = models.CharField(max_length=10)
     condition = models.CharField(max_length=10, default = "NA")
+
+
+class Code(models.Model):
+    code = models.CharField(max_length=36)
+    page = models.IntegerField(default=0)
