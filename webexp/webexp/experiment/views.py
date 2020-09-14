@@ -15,50 +15,75 @@ uuids = ['28578c95-e817-4748-ab78-1ecea968aa69', '982ee343-fca5-425b-98fb-78e446
 
 Frame = namedtuple("Frame", ["template", "function", "context"])
 
-count = 0
-participantId = ""
-context = {}
-selectedCharity = ""
 
 def manager(request, code = ""):
     # manager function
-    global participantId
-    global context
-    global count
     validCode = Code.objects.get(code = str(code)) # pylint: disable=no-member
     if not validCode:
-        context["error"] = "Zadali jste chybnou adresu."
+        localContext = {"error": "Zadali jste chybnou adresu."}
         template = loader.get_template('error.html')
-        return HttpResponse(template.render(context, request))
-    elif not participantId:
-        participantId = str(code)
-        participant = Participant(participant_id = participantId)
+        return HttpResponse(template.render(localContext, request))
+    elif not "participantId" in request.session:
+        if validCode.page == len(sequence) - 1:
+            localContext = {"error": "Experimentu jste se již zúčastnili."}
+            template = loader.get_template('error.html')
+            return HttpResponse(template.render(localContext, request))
+        request.session["participantId"] = str(code)
+        request.session["count"] = 0
+        request.session["context"] = {}
+        participant = Participant(participant_id = request.session["participantId"])
         participant.save()  
     posted = request.method == 'POST'
     if posted:
-        if not sequence[count].function(request):
+        if not sequence[request.session["count"]].function(request):
             # do not proceed to the next frame if returns True
-            count += 1
-            validCode.page = count
-            validCode.save()
+            request.session["count"] += 1
+            validCode.page = request.session["count"]    
+        else:
+            validCode.sessions -= 1
+        validCode.save()
     else:
-        count = validCode.page
-    context = sequence[count].context
-    template = loader.get_template('{}.html'.format(sequence[count].template))
+        request.session["count"] = validCode.page
+        validCode.sessions += 1
+        validCode.save()
+        if validCode.sessions > sum(gets[:validCode.page + 1]):
+            request.session["context"]["error"] = "Experiment již byl jednou spuštěn."
+            request.session.modified = True
+            template = loader.get_template('error.html')
+            validCode.sessions -= 1
+            validCode.save()
+            return HttpResponse(template.render(request.session["context"], request))       
+    request.session["context"].update(sequence[request.session["count"]].context)
+    template = loader.get_template('{}.html'.format(sequence[request.session["count"]].template))
     if posted:
         return HttpResponseRedirect(request.build_absolute_uri())
     else:
-        return HttpResponse(template.render(context, request))
+        return HttpResponse(template.render(request.session["context"], request))
+
+
+# to be deleted (also from urls)
+def clear(request):
+    try:
+        participant = Participant.objects.get(participant_id = "28578c95-e817-4748-ab78-1ecea968aa69") # pylint: disable=no-member
+        participant.delete()
+    except:
+        pass
+    code = Code.objects.get(code = "28578c95-e817-4748-ab78-1ecea968aa69") # pylint: disable=no-member
+    code.sessions = 0
+    code.page = 0
+    code.save()
+    request.session.flush()
+    localContext = {"error": "Cleared."}
+    template = loader.get_template('error.html')
+    return HttpResponse(template.render(localContext, request))
 
 
 def charity(request):
     # charity selection
     try:
-        global participantId
-        participant = Participant.objects.get(participant_id = participantId) # pylint: disable=no-member
+        participant = Participant.objects.get(participant_id = request.session["participantId"]) # pylint: disable=no-member
         charity = request.POST['charity']
-        global selectedCharity
-        selectedCharity = charity
+        request.session["charity"] = charity
         participant.charity = charity
         participant.save()
     except Exception as e:
@@ -70,7 +95,7 @@ def account(request):
     try:
         # checking the provided bank account number
         codes = ['0100', '0300', '0600', '0710', '0800', '2010', '2020', '2030', '2060', '2070', '2100', '2200', '2220', '2240', '2250', '2260', '2275', '2600', '2700', '3030', '3050', '3060', '3500', '4000', '4300', '5500', '5800', '6000', '6100', '6200', '6210', '6300', '6700', '6800', '7910', '7940', '7950', '7960', '7970', '7980', '7990', '8030', '8040', '8060', '8090', '8150', '8200', '8215', '8220', '8225', '8230', '8240', '8250', '8255', '8260', '8265', '8270', '8280', '8290', '8291', '8292', '8293', '8294', '8295', '8296', '8297', '8298']
-        providedNumber = request.POST['account'].strip()
+        providedNumber = request.POST['account'].strip().replace(" ", "")
         pattern = re.findall(r'^(?:([0-9]{1,6})-)?([0-9]{2,10})\/([0-9]{4})$', providedNumber)
         if not pattern:
             # email?
@@ -90,14 +115,13 @@ def account(request):
             if bank not in codes:
                 raise Exception(f"Kód banky {bank} v zadaném čísle {providedNumber}  je chybný.")
         # adding the number in the database
-        global participantId
-        participant = Participant.objects.get(participant_id = participantId) # pylint: disable=no-member
+        participant = Participant.objects.get(participant_id = request.session["participantId"]) # pylint: disable=no-member
         participant.bank_account = providedNumber
         participant.save()
     except Exception as e:
         print(e)    
-        global context
-        context["exception"] = e
+        request.session["context"]["exception"] = str(e)
+        request.session.modified = True
         return True
 
 
@@ -109,16 +133,19 @@ def task(request):
         end = data.pop("lastTrial")
         if not practice:
             if end:
-                global participantId
-                participant = Participant.objects.get(participant_id = participantId) # pylint: disable=no-member
+                participant = Participant.objects.get(participant_id = request.session["participantId"]) # pylint: disable=no-member
                 participant.reward = data['reward_total']
                 participant.charity_reward = data['charity_total']
                 participant.save()
-            trial = Trial(participant_id=participantId, **data)
+            trial = Trial(participant_id = request.session["participantId"], **data)
             trial.save()
     except Exception as e:
         print(e)
     return not end
+
+
+def ending(request):
+    request.session.flush()
 
 
 def intro(request):
@@ -132,13 +159,16 @@ sequence = [
     Frame("instructions1", intro, {}),
     Frame("task", task, {"practice": 1}),
     Frame("instructions2", intro, {}),
-    Frame("instructions3", intro, {"charity": selectedCharity}),
+    Frame("instructions3", intro, {}),
     Frame("instructions4", intro, {}),
     Frame("instructions5", intro, {}),
     Frame("instructions6", intro, {}),
     Frame("instructions7", intro, {}),
     Frame("task", task, {"practice": 0}),
-    Frame("account", account, {})
+    Frame("account", account, {}),
+    Frame("ending", ending, {})
     ]
+
+gets = [1] + [1 if i.template != "task" else 2 for i in sequence[:-1]]
 
 
