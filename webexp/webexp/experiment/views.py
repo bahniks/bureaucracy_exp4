@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 
 from .models import Participant, Trial, Code
 
@@ -16,49 +17,42 @@ uuids = ['28578c95-e817-4748-ab78-1ecea968aa69', '982ee343-fca5-425b-98fb-78e446
 Frame = namedtuple("Frame", ["template", "function", "context"])
 
 
-def manager(request, code = ""):
+def manager(request, code = "", page = 0):
     # manager function
     validCode = Code.objects.get(code = str(code)) # pylint: disable=no-member
     if not validCode:
-        localContext = {"error": "Zadali jste chybnou adresu."}
-        template = loader.get_template('error.html')
-        return HttpResponse(template.render(localContext, request))
+        return displayError(request, "Zadali jste chybnou adresu.")
     elif not "participantId" in request.session:
-        if validCode.page == len(sequence) - 1:
-            localContext = {"error": "Experimentu jste se již zúčastnili."}
-            template = loader.get_template('error.html')
-            return HttpResponse(template.render(localContext, request))
+        if validCode.page != 0:
+            return displayError(request, "Experimentu jste se již zúčastnili.")
         request.session["participantId"] = str(code)
-        request.session["count"] = 0
         request.session["context"] = {}
-        participant = Participant(participant_id = request.session["participantId"])
+        request.session["trial"] = 0
+        participant = Participant(participant_id = str(code))
         participant.save()  
     posted = request.method == 'POST'
     if posted:
-        if not sequence[request.session["count"]].function(request):
+        if page != validCode.page:
+            return displayError(request, "Toto není platná akce.")
+        if not sequence[validCode.page].function(request):
             # do not proceed to the next frame if returns True
-            request.session["count"] += 1
-            validCode.page = request.session["count"]    
-        else:
-            validCode.sessions -= 1
-        validCode.save()
-    else:
-        request.session["count"] = validCode.page
-        validCode.sessions += 1
-        validCode.save()
-        if validCode.sessions > sum(gets[:validCode.page + 1]):
-            request.session["context"]["error"] = "Experiment již byl jednou spuštěn."
-            request.session.modified = True
-            template = loader.get_template('error.html')
-            validCode.sessions -= 1
+            validCode.page += 1   
             validCode.save()
-            return HttpResponse(template.render(request.session["context"], request))       
-    request.session["context"].update(sequence[request.session["count"]].context)
-    template = loader.get_template('{}.html'.format(sequence[request.session["count"]].template))
+    else:
+        if page != validCode.page:
+            return displayError(request, "Toto není platná adresa.")
+    request.session["context"].update(sequence[validCode.page].context)
+    template = loader.get_template('{}.html'.format(sequence[validCode.page].template))
     if posted:
-        return HttpResponseRedirect(request.build_absolute_uri())
+        return HttpResponseRedirect(reverse("session", kwargs = {"code": code, "page": validCode.page}))
     else:
         return HttpResponse(template.render(request.session["context"], request))
+
+
+def displayError(request, text):
+    localContext = {"error": text}
+    template = loader.get_template('error.html')
+    return HttpResponse(template.render(localContext, request))    
 
 
 # to be deleted (also from urls)
@@ -69,7 +63,6 @@ def clear(request):
     except:
         pass
     code = Code.objects.get(code = "28578c95-e817-4748-ab78-1ecea968aa69") # pylint: disable=no-member
-    code.sessions = 0
     code.page = 0
     code.save()
     request.session.flush()
@@ -131,6 +124,13 @@ def task(request):
         data = json.loads(request.body.decode("utf-8"))
         practice = data.pop("practice")
         end = data.pop("lastTrial")
+        trial = int(data["order"])
+        if trial == request.session["trial"] + 1:
+            request.session["trial"] = data["order"]
+        else:
+            global sequence
+            code = Code.objects.get(code = request.session["participantId"]) # pylint: disable=no-member
+            sequence[code.page + 1] = Frame("error", intro, {"error": "V experimentu jsme zaznamenali neočekávané chování a musí být proto ukončen."})
         if not practice:
             if end:
                 participant = Participant.objects.get(participant_id = request.session["participantId"]) # pylint: disable=no-member
@@ -139,6 +139,8 @@ def task(request):
                 participant.save()
             trial = Trial(participant_id = request.session["participantId"], **data)
             trial.save()
+        elif practice and end:
+            request.session["trial"] = 0
     except Exception as e:
         print(e)
     return not end
@@ -168,7 +170,5 @@ sequence = [
     Frame("account", account, {}),
     Frame("ending", ending, {})
     ]
-
-gets = [1] + [1 if i.template != "task" else 2 for i in sequence[:-1]]
 
 

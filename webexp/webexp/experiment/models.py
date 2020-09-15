@@ -38,4 +38,4 @@ class Trial(models.Model):
 class Code(models.Model):
     code = models.CharField(max_length=36)
     page = models.IntegerField(default=0)
-    sessions = models.IntegerField(default=0)
+    # gets = models.IntegerField(default=0)

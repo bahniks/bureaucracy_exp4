@@ -280,7 +280,8 @@
         });
 
         function refresh() {
-          window.location.href = window.location.href;
+          var url = window.location.href.split("/");
+          window.location.href = url.slice(0, url.length - 2).join("/") + "/" + (parseInt(url[url.length -2]) + 1).toString();
         }
 
         function newTrial() {
