@@ -12,6 +12,9 @@
         display: none;
       }
     </style>
+    <title>PLESS experiment</title>
+    {% load static %}
+    <link rel="shortcut icon" type="image/png" href="{% static 'experiment/favicon.ico' %}"/>
   </head>
   <body>
     <canvas id="myCanvas"></canvas>
@@ -75,10 +78,9 @@
           currentObject.x = newX;
           
           if(newX > canvas.width + hSize / 2) {
-            date = new Date();
             saveData({
               "order": trial,  
-              "time_screen": cumTime, //date.getTime() - currentObject.time,
+              "time_screen": cumTime,
               "shape": currentObject.shape,
               "color": currentObject.color,  
               "bribe": currentObject.bribe,
@@ -99,9 +101,13 @@
               "practice": isPractice,
               "lastTrial": trial == totalTrials,
             });
+            if(isPractice) {
+              previousCorrect = null;
+            }
             if(trial <= totalTrials) {
               newTrial();
-            } else {
+            } 
+            if(trial > totalTrials) {
               return;
             }
           }
@@ -205,6 +211,24 @@
           context.fillText(bribe, x + hSize/2, y - hSize/2);
         }
 
+        function displayPreviousTrial() {
+          context.font = font;
+          context.fillStyle = "black";
+          context.textAlign = "center";
+          context.textBaseline = "middle";
+          if(previousCorrect !== undefined) {
+            if(previousCorrect != null) {
+              if(previousCorrect) {
+                context.fillText("Předchozí objekt byl zařazen SPRÁVNĚ.", window.innerWidth/2, window.innerHeight/2 + vSize/2);
+              } else {
+                context.fillText("Předchozí objekt byl zařazen CHYBNĚ.", window.innerWidth/2, window.innerHeight/2 + vSize/2);
+              }
+            } else {
+              context.fillText("Předchozí objekt nebyl zařazen.", window.innerWidth/2, window.innerHeight/2 + vSize/2);
+            }
+          }          
+        }
+
         function createInfo() {
           context.font = font;
           context.fillStyle = "black";
@@ -212,13 +236,7 @@
           context.textBaseline = "middle";
           context.fillText(trial.toString() + "/" + totalTrials.toString(), window.innerWidth/2, vSize/5);
           if(isPractice) {
-            if(previousCorrect != null) {
-              if(previousCorrect) {
-                context.fillText("Předchozí objekt byl zařazen SPRÁVNĚ.", window.innerWidth/2, window.innerHeight/2 + vSize/2);
-              } else {
-                context.fillText("Předchozí objekt byl zařazen CHYBNĚ.", window.innerWidth/2, window.innerHeight/2 + vSize/2);
-              }
-            }
+            displayPreviousTrial();
             return;
           }
           context.textAlign = "right";
@@ -231,9 +249,6 @@
             // if shape is correct
             if(currentObject.shape == potShapes[parseInt(event.key)-1]) {
               reward += currentObject.bribe;
-              if(isPractice) {
-                previousCorrect = true;
-              }
             }          
             // if color is NOT correct
             if(currentObject.color != potColors[parseInt(event.key)-1]) {
@@ -241,12 +256,13 @@
               if(isPractice) {
                 previousCorrect = false;
               }
+            } else if(isPractice) {
+              previousCorrect = true;
             }      
             reward += sortReward;
-            date = new Date();
             saveData({
               "order": trial,  
-              "time_screen": cumTime, // date.getTime() - currentObject.time,
+              "time_screen": cumTime,
               "shape": currentObject.shape,
               "color": currentObject.color,  
               "bribe": currentObject.bribe,
@@ -286,6 +302,7 @@
 
         function newTrial() {
           if(trial == totalTrials) {
+            trial++;
             window.cancelAnimFrame(animationRequest);
             context.clearRect(0, 0, canvas.width, canvas.height);            
             context.font = font;
@@ -293,13 +310,7 @@
             context.textAlign = "center";
             context.textBaseline = "middle";
             if(isPractice) {
-              if(previousCorrect != null) {
-                if(previousCorrect) {
-                  context.fillText("Předchozí objekt byl zařazen SPRÁVNĚ.", window.innerWidth/2, window.innerHeight/2 + vSize/2);
-                } else {
-                  context.fillText("Předchozí objekt byl zařazen CHYBNĚ.", window.innerWidth/2, window.innerHeight/2 + vSize/2);
-                }
-              }
+              displayPreviousTrial();
             } else {
               context.fillText("Toto je konec úlohy na třízení obrazců.", window.innerWidth/2, window.innerHeight/2 + vSize/2);
             }
@@ -405,7 +416,7 @@
         var reward = 0;
         var trial = 1;
         var charity = initialCharity;
-        var previousCorrect = null;
+        var previousCorrect = undefined;
         var paused = false;
         var pauseNumber = 0;
 

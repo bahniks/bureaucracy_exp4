@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Participant, Trial, Code
 
@@ -19,19 +20,30 @@ Frame = namedtuple("Frame", ["template", "function", "context"])
 
 def manager(request, code = "", page = 0):
     # manager function
-    validCode = Code.objects.get(code = str(code)) # pylint: disable=no-member
-    if not validCode:
+    try:
+        validCode = Code.objects.get(code = str(code)) # pylint: disable=no-member
+    except ObjectDoesNotExist:
         return displayError(request, "Zadali jste chybnou adresu.")
-    elif not "participantId" in request.session:
-        if validCode.page != 0:
-            return displayError(request, "Experimentu jste se již zúčastnili.")
-        request.session["participantId"] = str(code)
-        request.session["context"] = {}
-        request.session["trial"] = 0
-        participant = Participant(participant_id = str(code))
-        participant.save()  
+    else:
+        if not "participantId" in request.session:
+            if validCode.page == len(sequence) - 1:
+                return displayError(request, "Experimentu jste se již zúčastnili.")
+            elif validCode.page != 0:
+                return displayError(request, "Experiment byl ukončen z důvodu neaktivity.")
+            request.session["participantId"] = str(code)
+            request.session["context"] = {}
+            request.session["trial"] = 0
+            request.session["activity"] = 0 # just for the session expiry
+            request.session.set_expiry(900)
     posted = request.method == 'POST'
+    request.session["activity"] += 1
     if posted:
+        try:
+            participant = Participant.objects.get(participant_id = str(code)) # pylint: disable=no-member
+        except ObjectDoesNotExist:
+            participant = Participant(participant_id = str(code))
+            participant.status = "started"
+            participant.save()              
         if page != validCode.page:
             return displayError(request, "Toto není platná akce.")
         if not sequence[validCode.page].function(request):
@@ -40,7 +52,10 @@ def manager(request, code = "", page = 0):
             validCode.save()
     else:
         if page != validCode.page:
-            return displayError(request, "Toto není platná adresa.")
+            if validCode.page == len(sequence) - 1:
+                return displayError(request, "Experimentu jste se již zúčastnili.")
+            else:
+                return displayError(request, "Toto není platná adresa.")
     request.session["context"].update(sequence[validCode.page].context)
     template = loader.get_template('{}.html'.format(sequence[validCode.page].template))
     if posted:
@@ -147,6 +162,9 @@ def task(request):
 
 
 def ending(request):
+    participant = Participant.objects.get(participant_id = request.session["participantId"]) # pylint: disable=no-member
+    participant.status = "finished"
+    participant.save()
     request.session.flush()
 
 
@@ -157,8 +175,8 @@ def intro(request):
 
 sequence = [
     Frame("intro", intro, {}),
-    Frame("charity", charity, {}),
-    Frame("instructions1", intro, {}),
+    # Frame("charity", charity, {}),
+    # Frame("instructions1", intro, {}),
     Frame("task", task, {"practice": 1}),
     Frame("instructions2", intro, {}),
     Frame("instructions3", intro, {}),

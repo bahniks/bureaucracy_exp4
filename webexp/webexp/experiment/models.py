@@ -7,6 +7,9 @@ class Participant(models.Model):
     reward = models.CharField(max_length=10, default="NA")
     charity_reward = models.CharField(max_length=10, default="NA")
     bank_account = models.CharField(max_length=50, default="NA")
+    status = models.CharField(max_length=50, default="NA")
+    start = models.DateTimeField(auto_now=True, editable = True)
+    end = models.DateTimeField(auto_now_add=True, editable = True)
 
     def __str__(self):
         return self.participant_id
@@ -32,10 +35,9 @@ class Trial(models.Model):
     shape1 = models.CharField(max_length=10)	
     shape2 = models.CharField(max_length=10)	
     shape3 = models.CharField(max_length=10)
-    condition = models.CharField(max_length=10, default = "NA")
+    condition = models.CharField(max_length=10, default="NA")
 
 
 class Code(models.Model):
     code = models.CharField(max_length=36)
     page = models.IntegerField(default=0)
-    # gets = models.IntegerField(default=0)
