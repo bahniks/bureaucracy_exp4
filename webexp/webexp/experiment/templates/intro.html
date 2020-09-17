@@ -40,6 +40,7 @@
             document.getElementById("problem").innerHTML = "Experiment nelze spustit na mobilním zařízení! Odkaz z pozvánky spusťte na počítači.";
         } else if(smallScreen()) {
             document.getElementById("problem").innerHTML = "Experiment vyžaduje velikost okna alespoň 1000x700 pixelů! Zvětšete okno nebo spusťte odkaz z pozvánky na zařízení s větším rozlišením.";
+            alert("Experiment vyžaduje velikost okna alespoň 1000x700 pixelů! Zvětšete okno nebo spusťte odkaz z pozvánky na zařízení s větším rozlišením.");
         } else if(isIE()) {
             document.getElementById("problem").innerHTML = "Experiment nelze spustit v prohlížeči Internet Explorer! Odkaz z pozvánky spusťte v jiném prohlížeči.";
         } else {

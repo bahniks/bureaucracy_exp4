@@ -70,7 +70,18 @@ def displayError(request, text):
     return HttpResponse(template.render(localContext, request))    
 
 
-# to be deleted (also from urls)
+def handler404(request, exception, template="404.html"):
+    response = template.render({}, request)
+    response.status_code = 404
+    return response
+
+
+def handler403(request, exception, template="403.html"):
+    response = template.render({}, request)
+    response.status_code = 403
+    return response
+
+
 def clear(request):
     try:
         participant = Participant.objects.get(participant_id = "28578c95-e817-4748-ab78-1ecea968aa69") # pylint: disable=no-member
@@ -94,8 +105,8 @@ def charity(request):
         request.session["charity"] = charity
         participant.charity = charity
         participant.save()
-    except Exception as e:
-        print(e)    
+    except Exception:
+        pass 
 
 
 def account(request):
@@ -126,8 +137,7 @@ def account(request):
         participant = Participant.objects.get(participant_id = request.session["participantId"]) # pylint: disable=no-member
         participant.bank_account = providedNumber
         participant.save()
-    except Exception as e:
-        print(e)    
+    except Exception as e:  
         request.session["context"]["exception"] = str(e)
         request.session.modified = True
         return True
@@ -156,8 +166,8 @@ def task(request):
             trial.save()
         elif practice and end:
             request.session["trial"] = 0
-    except Exception as e:
-        print(e)
+    except Exception:
+        pass
     return not end
 
 
@@ -177,13 +187,13 @@ sequence = [
     Frame("intro", intro, {}),
     # Frame("charity", charity, {}),
     # Frame("instructions1", intro, {}),
-    Frame("task", task, {"practice": 1}),
-    Frame("instructions2", intro, {}),
-    Frame("instructions3", intro, {}),
-    Frame("instructions4", intro, {}),
-    Frame("instructions5", intro, {}),
-    Frame("instructions6", intro, {}),
-    Frame("instructions7", intro, {}),
+    # Frame("task", task, {"practice": 1}),
+    # Frame("instructions2", intro, {}),
+    # Frame("instructions3", intro, {}),
+    # Frame("instructions4", intro, {}),
+    # Frame("instructions5", intro, {}),
+    # Frame("instructions6", intro, {}),
+    # Frame("instructions7", intro, {}),
     Frame("task", task, {"practice": 0}),
     Frame("account", account, {}),
     Frame("ending", ending, {})
