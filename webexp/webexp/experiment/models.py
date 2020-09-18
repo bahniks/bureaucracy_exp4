@@ -8,11 +8,14 @@ class Participant(models.Model):
     charity_reward = models.CharField(max_length=10, default="NA")
     bank_account = models.CharField(max_length=50, default="NA")
     status = models.CharField(max_length=50, default="NA")
-    start = models.DateTimeField(auto_now=True, editable = True)
-    end = models.DateTimeField(auto_now_add=True, editable = True)
+    start = models.DateTimeField(auto_now_add=True, editable = True)
+    end = models.DateTimeField(auto_now=True, editable = True)
 
     def __str__(self):
-        return self.participant_id
+        field_values = []
+        for field in self._meta.get_fields(): # pylint: disable=no-member
+            field_values.append(str(getattr(self, field.name, '')))
+        return '\t'.join(field_values)
 
 
 class Trial(models.Model):
@@ -37,7 +40,19 @@ class Trial(models.Model):
     shape3 = models.CharField(max_length=10)
     condition = models.CharField(max_length=10, default="NA")
 
+    def __str__(self):
+        field_values = []
+        for field in self._meta.get_fields(): # pylint: disable=no-member
+            field_values.append(str(getattr(self, field.name, '')))
+        return '\t'.join(field_values)
+
 
 class Code(models.Model):
     code = models.CharField(max_length=36)
     page = models.IntegerField(default=0)
+
+    def __str__(self):
+        field_values = []
+        for field in self._meta.get_fields(): # pylint: disable=no-member
+            field_values.append(str(getattr(self, field.name, '')))
+        return '\t'.join(field_values)
