@@ -12,4 +12,12 @@ urlpatterns = [
     path('participants/', views.showParticipants, name='show_participants'),
     path('participant_data/', views.showParticipantLinks, name='show_participants_links'),
     path('data/<uuid:code>/', views.showData, name='show_data'),
+    path("download_trials/", views.downloadTrials, name='download_trials'),
+    path("download_trials/<str:filename>/", views.downloadTrials, name='download_trials'),
+    path("download_participants/", views.downloadParticipants, name='download_participants'),
+    path("download_participants/<str:filename>/", views.downloadParticipants, name='download_participants'),
+    path("download_codes/", views.downloadCodes, name='download_codes'),
+    path("download_codes/<str:filename>/", views.downloadCodes, name='download_codes'),
+    path("download_logs/", views.downloadLogs, name='download_logs'),
+    path("download_logs/<str:filename>/", views.downloadLogs, name='download_logs'),
 ]

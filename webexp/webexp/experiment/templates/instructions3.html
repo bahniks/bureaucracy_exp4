@@ -2,13 +2,12 @@
 {% block body %}
     <div class="main">
         <p>
-            Body, jež v této třídící úloze získáte pro sebe a pro charitu {{ charity }}, se převedou na peníze kurzem 10 bodů = 1 Kč.
-        <br><br>
-            Vaše odměna Vám bude vyplacena na vámi zvolený bankovní účet. Peníze pro charity od jednotlivých vylosovaných účastníků budou po skončení sběru dat sečteny a převedeny na bankovní účty charit.
-        <br><br>
-            Po kliknutí na Pokračovat se dostanete k další části instrukcí.
-        <br>
+            Níže vidíte, jak vypadá obrazovka v průběhu úkolu spolu s popisky jednotlivých prvků.
+            <br><br>
+            Až si obrázek prohlédnete, klikněte na Pokračovat.        
         </p>      
+        {% load static %}
+        <img src="{% static "experiment/screen1.gif" %}" alt="Example screen 1">
         <form method="POST">
             {% csrf_token %}
             <input type="submit" name="continue" value="Pokračovat">

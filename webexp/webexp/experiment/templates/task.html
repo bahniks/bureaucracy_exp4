@@ -7,10 +7,6 @@
         padding: 0px;
         overflow: hidden;
       }
-
-      script {
-        display: none;
-      }
     </style>
     <title>PLESS experiment</title>
     {% load static %}
@@ -251,6 +247,9 @@
             return;
           }
           if(keys.includes(event.key)) {
+            if(cumTime < hSize*4 / speed) {
+              return;
+            }
             key = (keys.indexOf(event.key) % 3) + 1;
             // if shape is correct
             if(currentObject.shape == potShapes[key-1]) {
@@ -318,7 +317,7 @@
             if(isPractice) {
               displayPreviousTrial();
             } else {
-              context.fillText("Toto je konec úlohy na třízení obrazců.", window.innerWidth/2, window.innerHeight/2 + vSize/2);
+              context.fillText("Toto je konec úlohy na třídění obrazců.", window.innerWidth/2, window.innerHeight/2 + vSize/2);
             }
             setTimeout(refresh, 2000);
           } else {
@@ -402,9 +401,9 @@
         const minimumHeight = 700;
         const minimumWidth = 1000;
         if(isPractice) {
-          var totalTrials = 2;
+          var totalTrials = 6;
         } else {
-          var totalTrials = 4;
+          var totalTrials = 10;
         }
         const halfTrials = totalTrials / 2;
 
@@ -472,13 +471,17 @@
           }
         }
 
+        function startTask() {
+          window.requestAnimFrame(animate);
+        }
+
         // starting the animation
         if(window.innerWidth < minimumWidth || window.innerHeight < minimumHeight) {
           pauseNumber -= 1;
           pauseTask();
         } else {
           if (document.visibilityState == "visible") {
-            window.requestAnimFrame(animate);
+            setTimeout(startTask, 1000);
           }
         }
        

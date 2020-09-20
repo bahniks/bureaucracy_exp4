@@ -8,8 +8,8 @@ class Participant(models.Model):
     charity_reward = models.CharField(max_length=10, default="NA")
     bank_account = models.CharField(max_length=50, default="NA")
     status = models.CharField(max_length=50, default="NA")
-    start = models.DateTimeField(auto_now_add=True, editable = True)
-    end = models.DateTimeField(auto_now=True, editable = True)
+    start = models.DateTimeField(auto_now_add=True)
+    end = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         field_values = []
@@ -50,6 +50,20 @@ class Trial(models.Model):
 class Code(models.Model):
     code = models.CharField(max_length=36)
     page = models.IntegerField(default=0)
+
+    def __str__(self):
+        field_values = []
+        for field in self._meta.get_fields(): # pylint: disable=no-member
+            field_values.append(str(getattr(self, field.name, '')))
+        return '\t'.join(field_values)
+
+
+class Log(models.Model):
+    code = models.CharField(max_length=36)
+    page = models.IntegerField()
+    request = models.CharField(max_length=4)
+    time = models.DateTimeField(auto_now_add=True)
+    result = models.CharField(max_length=8, default="error")
 
     def __str__(self):
         field_values = []
