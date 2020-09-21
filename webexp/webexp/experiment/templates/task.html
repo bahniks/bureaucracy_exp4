@@ -401,9 +401,9 @@
         const minimumHeight = 700;
         const minimumWidth = 1000;
         if(isPractice) {
-          var totalTrials = 6;
-        } else {
           var totalTrials = 10;
+        } else {
+          var totalTrials = 20;
         }
         const halfTrials = totalTrials / 2;
 
@@ -429,7 +429,6 @@
         var canvas = document.getElementById('myCanvas');
         var context = canvas.getContext('2d');      
         init();
-        createPots();
         var currentObject = createObject();                 
      
         // disable right click
@@ -472,7 +471,24 @@
         }
 
         function startTask() {
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          createPots();
+          createInfo();
           window.requestAnimFrame(animate);
+        }
+
+        function displayCountdown(num) {
+          context.font = font;
+          context.fillStyle = "black";
+          context.textAlign = "center";
+          context.textBaseline = "middle";
+          if(num == 0) {
+            setTimeout(startTask, 1000);
+          } else {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.fillText(num.toString(), window.innerWidth/2, window.innerHeight/2);
+            setTimeout(function() {displayCountdown(num - 1)}, 1000);
+          }          
         }
 
         // starting the animation
@@ -481,7 +497,7 @@
           pauseTask();
         } else {
           if (document.visibilityState == "visible") {
-            setTimeout(startTask, 1000);
+            displayCountdown(3);
           }
         }
        
