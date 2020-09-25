@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
 from .models import Participant, Trial, Code, Log
 
@@ -23,6 +24,7 @@ charities = {
     }
 
 
+@never_cache
 def manager(request, code = "", page = 0):
     # manager function
     log = Log(code = str(code), page = page, request = request.method)

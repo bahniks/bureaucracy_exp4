@@ -325,7 +325,7 @@
             if(trial > halfTrials) {
               if(condition == "small_first") {
                 bribeSizes = bribeSizesAll.slice(3, 6);
-              } else if(condition == "bigfirst") {
+              } else if(condition == "big_first") {
                 bribeSizes = bribeSizesAll.slice(0, 3);
               }
             }
@@ -350,7 +350,9 @@
           if(pauseNumber == totalPauses && !isPractice) {
             return;
           }
-          pauseNumber += 1;
+          if(!paused) {
+            pauseNumber += 1;
+          }          
           paused = true;
           window.cancelAnimFrame(animationRequest);
           context.clearRect(0, 0, canvas.width, canvas.height);
@@ -405,13 +407,13 @@
         } else {
           var totalTrials = 20;
         }
-        const halfTrials = totalTrials / 2;
+        var halfTrials = totalTrials / 2;
 
         // condition
-        const condition = sample(["small_first", "control", "big_first"]);
+        var condition = sample(["small_first", "control", "big_first"]);
         if(condition == "small_first") {
           var bribeSizes = bribeSizesAll.slice(0, 3);
-        } else if(condition == "bigfirst") {
+        } else if(condition == "big_first") {
           var bribeSizes = bribeSizesAll.slice(3, 6);
         } else {
           var bribeSizes = bribeSizesAll;
@@ -452,7 +454,7 @@
             }            
           } else {
             init();
-            pauseNumber -= 1;
+            // pauseNumber -= 1;
             pauseTask();
           }
         }
@@ -482,7 +484,10 @@
           context.fillStyle = "black";
           context.textAlign = "center";
           context.textBaseline = "middle";
-          if(num == 0) {
+          if(paused) {
+            pauseNumber -= 1;
+            pauseTask();
+          } else if(num == 0) {
             setTimeout(startTask, 1000);
           } else {
             context.clearRect(0, 0, canvas.width, canvas.height);
