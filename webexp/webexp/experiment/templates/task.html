@@ -241,14 +241,23 @@
         }
 
         var keys = ["j", "k", "l", "J", "K", "L"];
+        var released = true;
+
+        document.addEventListener('keyup', function(event) {
+          if(keys.includes(event.key)) {
+            released = true;
+          }          
+        });
 
         document.addEventListener('keydown', function(event) {
-          if(trial > totalTrials) {
+          if(trial > totalTrials || !released) {
             return;
           }
           if(keys.includes(event.key)) {
             if(cumTime < hSize*4 / speed) {
               return;
+            } else {
+              released = false;
             }
             key = (keys.indexOf(event.key) % 3) + 1;
             // if shape is correct
@@ -405,7 +414,7 @@
         if(isPractice) {
           var totalTrials = 10;
         } else {
-          var totalTrials = 20;
+          var totalTrials = 200;
         }
         var halfTrials = totalTrials / 2;
 
@@ -454,7 +463,6 @@
             }            
           } else {
             init();
-            // pauseNumber -= 1;
             pauseTask();
           }
         }

@@ -2,12 +2,12 @@
 {% block body %}
     <div class="main">
         <p>
-            Níže vidíte, co se stane, když žlutý čtverec, jenž jste viděli dříve, zatřídíte dle TVARU.
+            Níže vidíte, co se stane, když žlutý čtverec, jenž jste viděli dříve, zatřídíte dle BARVY. 
             <br><br>
             Až si obrázek prohlédnete, klikněte na “Pokračovat”.        
         </p>      
         {% load static %}
-        <img src="{% static "experiment/screen2.png" %}" alt="Example screen 1" width="800px">
+        <img src="{% static "experiment/screen3.png" %}" alt="Example screen 1" width="800px">
         <form method="POST">
             {% csrf_token %}
             <input type="submit" name="continue" value="Pokračovat">

@@ -1,13 +1,11 @@
 {% extends "base.html" %}
 {% block body %}
     <div class="main">
-        <p>
-            Níže vidíte, jak vypadá obrazovka v průběhu úkolu spolu s popisky jednotlivých prvků.
-            <br><br>
-            Až si obrázek prohlédnete, klikněte na Pokračovat.        
-        </p>      
-        {% load static %}
-        <img src="{% static "experiment/screen1.gif" %}" alt="Example screen 1">
+        <p>Nyní si úlohu cvičně vyzkoušíte s 10 obrazci.</p>
+        <p>V úloze si můžete kdykoli udělat přestávku stisknutím tlačítka MEZERNÍK.</p>
+        <p>Poté, co si budete jisti, že instrukcím rozumíte, klikněte na “Pokračovat” a ukazováček, prostředníček a prsteníček položte na klávesy “J”, “K”, a “L”.</p>
+        <p>Pozor – po kliknutí na “Pokračovat” úloha po krátkém odpočtu začne a na zatřídění každého obrázku máte jen několik vteřin – dokud obrázek neopustí obrazovku.</p>
+        <br><br>           
         <form method="POST">
             {% csrf_token %}
             <input type="submit" name="continue" value="Pokračovat">

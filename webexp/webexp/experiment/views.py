@@ -39,6 +39,8 @@ def manager(request, code = "", page = 0):
                 return displayError(request, "Experimentu jste se již zúčastnili.")
             elif validCode.page != 0:
                 return displayError(request, "Experiment byl ukončen z důvodu neaktivity.")
+            elif len(Participant.objects.filter(status = "finished")) >= 300: # pylint: disable=no-member
+                return displayError(request, "Experimentu se již nelze zúčastnit. Počet účastníků dosáhl limitu.")
             request.session["participantId"] = str(code)
             request.session["context"] = {}
             request.session["trial"] = 0
@@ -65,9 +67,12 @@ def manager(request, code = "", page = 0):
                 return displayError(request, "Experimentu jste se již zúčastnili.")
             else:
                 posted = True
-                #return displayError(request, "Toto není platná adresa.")
-    request.session["context"].update(sequence[validCode.page].context)
-    template = loader.get_template('{}.html'.format(sequence[validCode.page].template))
+    if validCode.page > 0 and Participant.objects.get(participant_id = str(code)).status == "task_error": # pylint: disable=no-member
+        request.session["context"].update({"error": "V experimentu jsme zaznamenali neočekávané chování a musí být proto ukončen."})
+        template = loader.get_template('error.html')
+    else:
+        request.session["context"].update(sequence[validCode.page].context)
+        template = loader.get_template('{}.html'.format(sequence[validCode.page].template))
     log.result = "success"
     log.save()
     if posted:
@@ -137,9 +142,6 @@ def task(request):
         if trial == request.session["trial"] + 1:
             request.session["trial"] = data["order"]
         else:
-            global sequence
-            code = Code.objects.get(code = request.session["participantId"]) # pylint: disable=no-member
-            sequence[code.page + 1] = Frame("error", intro, {"error": "V experimentu jsme zaznamenali neočekávané chování a musí být proto ukončen."})
             participant = Participant.objects.get(participant_id = request.session["participantId"]) # pylint: disable=no-member
             participant.status = "task_error"
             participant.save()           
@@ -306,12 +308,14 @@ sequence = [
     Frame("intro", intro, {}),
     Frame("charity", charity, {}),
     Frame("instructions1", intro, {}),
-    Frame("task", task, {"practice": 1}),
     Frame("instructions2", intro, {}),
     Frame("instructions3", intro, {}),
+    Frame("task", task, {"practice": 1}),
     Frame("instructions4", intro, {}),
     Frame("instructions5", intro, {}),
     Frame("instructions6", intro, {}),
+    Frame("instructions7", intro, {}),
+    Frame("instructions8", intro, {}),
     Frame("task", task, {"practice": 0}),
     Frame("account", account, {}),
     Frame("ending", intro, {})
