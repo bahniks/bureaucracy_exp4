@@ -76,7 +76,7 @@ def manager(request, code = "", page = 0):
     log.result = "success"
     log.save()
     if sequence[validCode.page].template == "task" and request.session["trial"] != 0:
-        return HttpResponse(request.session["trial"])
+        return displayError(request, "V experimentu jsme zaznamenali neočekávané chování a musí být proto ukončen.")
     if posted:
         return HttpResponseRedirect(reverse("session", kwargs = {"code": code, "page": validCode.page}))
     elif page == len(sequence) - 1:
