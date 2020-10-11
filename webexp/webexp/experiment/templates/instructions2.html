@@ -10,7 +10,7 @@
         <img src="{% static "experiment/screen0.png" %}" alt="Example screen 0" width="800px">
         <form method="POST">
             {% csrf_token %}
-            <input type="submit" name="continue" value="Pokračovat">
+            <input type="submit" name="continue" value="Pokračovat" onclick="this.disabled=true; this.form.submit();">
         </form>
     </div>
 {% endblock %}
