@@ -254,7 +254,7 @@
             return;
           }
           if(keys.includes(event.key)) {
-            if(cumTime < hSize*4 / speed) {
+            if(cumTime < hSize*4 / speed || processing) {
               return;
             } else {
               released = false;
@@ -344,16 +344,21 @@
           }
         }
 
-        function saveData(data) {
-          fetch(window.location.href, {
+        var processing = false;
+        async function saveData(data) {
+          processing = true;
+          response = await fetch(window.location.href, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'X-CSRFToken': csrftoken,
             },
             body: JSON.stringify(data),
-          })
-        };
+          }).then(data => data.json());
+          if(response != 0) {
+            processing = false;
+          }
+        }
 
         function pauseTask() {
           if(pauseNumber == totalPauses && !isPractice) {

@@ -75,6 +75,8 @@ def manager(request, code = "", page = 0):
         template = loader.get_template('{}.html'.format(sequence[validCode.page].template))
     log.result = "success"
     log.save()
+    if sequence[validCode.page].template == "task" and request.session["trial"] != 0:
+        return HttpResponse(request.session["trial"])
     if posted:
         return HttpResponseRedirect(reverse("session", kwargs = {"code": code, "page": validCode.page}))
     elif page == len(sequence) - 1:
@@ -159,8 +161,8 @@ def task(request):
             trial.save()
         elif practice and end:
             request.session["trial"] = 0
-    except Exception as e:
-        print(e)
+    except Exception:
+        pass
     return not end
 
 
@@ -218,22 +220,6 @@ def codes(request, number = 5):
         base = request.build_absolute_uri(reverse("base"))
         urls += [f"{base}{code}/"]
     return HttpResponse(loader.get_template("codes.html").render({"urls": urls}, request))   
-
-
-@login_required(login_url='/admin/login/')
-def clear(request):
-    try:
-        participant = Participant.objects.get(participant_id = "28578c95-e817-4748-ab78-1ecea968aa69") # pylint: disable=no-member
-        participant.delete()
-    except:
-        pass
-    code = Code.objects.get(code = "28578c95-e817-4748-ab78-1ecea968aa69") # pylint: disable=no-member
-    code.page = 0
-    code.save()
-    request.session.flush()
-    localContext = {"error": "Cleared."}
-    template = loader.get_template('error.html')
-    return HttpResponse(template.render(localContext, request))
 
 
 @login_required(login_url='/admin/login/')
