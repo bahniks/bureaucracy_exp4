@@ -354,10 +354,7 @@
               'X-CSRFToken': csrftoken,
             },
             body: JSON.stringify(data),
-          }).then(data => data.json());
-          if(response != 0) {
-            processing = false;
-          }
+          }).then(processing = false);
         }
 
         function pauseTask() {
