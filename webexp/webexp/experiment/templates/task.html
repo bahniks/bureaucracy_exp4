@@ -359,12 +359,12 @@
         }
 
         function pauseTask() {
-          if(pauseNumber == totalPauses && !isPractice) {
-            return;
-          }
           if(!paused) {
+            if(pauseNumber == totalPauses && !isPractice) {
+              return;
+            }
             pauseNumber += 1;
-          }          
+          }
           paused = true;
           window.cancelAnimFrame(animationRequest);
           context.clearRect(0, 0, canvas.width, canvas.height);
@@ -381,7 +381,7 @@
           }
           if(window.innerWidth < minimumWidth || window.innerHeight < minimumHeight) {
             context.fillText(`Okno experimentu musí mít velikost alespoň ${minimumWidth}x${minimumHeight} pixelů!`, window.innerWidth/2, window.innerHeight/2 + 60);
-            context.fillText("Zvětšete okno a klikněte na tlačítko OK.", window.innerWidth/2, window.innerHeight/2 + 100);
+            context.fillText("Zvětšete okno a zmáčkněte tlačítko MEZERNÍK.", window.innerWidth/2, window.innerHeight/2 + 100);
           }
         }
 

@@ -109,7 +109,7 @@ def account(request):
         pattern = re.findall(r'^(?:([0-9]{1,6})-)?([0-9]{2,10})\/([0-9]{4})$', providedNumber)
         if not pattern:
             # email?
-            if not re.search(r'^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$', providedNumber):
+            if not re.search(r'[^@]+@[^@]+\.[^@]+', providedNumber):
                 raise Exception(f"Zadané číslo {providedNumber} nemá správný formát.")
         else:
             weights = [6, 3, 7, 9, 10, 5, 8, 4, 2, 1]
