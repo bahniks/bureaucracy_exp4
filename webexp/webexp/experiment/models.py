@@ -38,7 +38,7 @@ class Trial(models.Model):
     shape1 = models.CharField(max_length=10)	
     shape2 = models.CharField(max_length=10)	
     shape3 = models.CharField(max_length=10)
-    condition = models.CharField(max_length=10, default="NA")
+    condition = models.CharField(max_length=12, default="NA")
 
     def __str__(self):
         field_values = []
