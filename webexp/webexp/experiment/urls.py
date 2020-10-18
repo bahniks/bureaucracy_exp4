@@ -6,6 +6,7 @@ urlpatterns = [
     path('', views.base, name='base'),
     path('<uuid:code>/', views.manager, name='manager'),
     path('<uuid:code>/<int:page>/', views.manager, name='session'),
+    path('<uuid:code>/ping/', views.ping, name='ping'),
     path('add_codes/<int:number>/', views.codes, name='add_codes'),
     path('delete_data/', views.delete, name='delete_data'),
     # path("clear", views.clear, name = "clear"), # for testing

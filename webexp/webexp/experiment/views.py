@@ -43,7 +43,7 @@ def manager(request, code = "", page = 0):
                 return displayError(request, "Experimentu se již nelze zúčastnit. Počet účastníků dosáhl limitu.")
             request.session["participantId"] = str(code)
             request.session["context"] = {}
-            request.session["trial"] = 0
+            request.session["taskStarted"] = False
             request.session["activity"] = 0 # just for the session expiry
             request.session.set_expiry(900)
     posted = request.method == 'POST'
@@ -67,15 +67,11 @@ def manager(request, code = "", page = 0):
                 return displayError(request, "Experimentu jste se již zúčastnili.")
             else:
                 posted = True
-    if validCode.page > 0 and Participant.objects.get(participant_id = str(code)).status == "task_error": # pylint: disable=no-member
-        request.session["context"].update({"error": "V experimentu jsme zaznamenali neočekávané chování a musí být proto ukončen."})
-        template = loader.get_template('error.html')
-    else:
-        request.session["context"].update(sequence[validCode.page].context)
-        template = loader.get_template('{}.html'.format(sequence[validCode.page].template))
+    request.session["context"].update(sequence[validCode.page].context)
+    template = loader.get_template('{}.html'.format(sequence[validCode.page].template))
     log.result = "success"
     log.save()
-    if sequence[validCode.page].template == "task" and request.session["trial"] != 0:
+    if sequence[validCode.page].template == "task" and request.session["taskStarted"]:
         return displayError(request, "V experimentu jsme zaznamenali neočekávané chování a musí být proto ukončen.")
     if posted:
         return HttpResponseRedirect(reverse("session", kwargs = {"code": code, "page": validCode.page}))
@@ -84,6 +80,8 @@ def manager(request, code = "", page = 0):
         end(request)
         return HttpResponse(template.render(context, request))
     else:
+        if sequence[validCode.page].template == "task":
+            request.session["taskStarted"] = True
         return HttpResponse(template.render(request.session["context"], request))
 
 
@@ -139,14 +137,7 @@ def task(request):
     try:
         data = json.loads(request.body.decode("utf-8"))
         practice = data.pop("practice")
-        end = data.pop("lastTrial")
-        trial = int(data["order"])
-        if trial == request.session["trial"] + 1:
-            request.session["trial"] = data["order"]
-        else:
-            participant = Participant.objects.get(participant_id = request.session["participantId"]) # pylint: disable=no-member
-            participant.status = "task_error"
-            participant.save()           
+        end = data.pop("lastTrial")        
         if not practice:
             if end:
                 participant = Participant.objects.get(participant_id = request.session["participantId"]) # pylint: disable=no-member
@@ -160,7 +151,7 @@ def task(request):
             trial = Trial(participant_id = request.session["participantId"], **data)
             trial.save()
         elif practice and end:
-            request.session["trial"] = 0
+            request.session["taskStarted"] = False
     except Exception:
         pass
     return not end
@@ -198,6 +189,12 @@ def handler403(request, exception, template="403.html"):
 
 def base(request):
     return displayError(request, "Toto není platná adresa.")
+
+
+def ping(request, code = ""):
+    log = Log(code = str(code), page = 99, request = request.method, result = "success")
+    log.save()
+    return HttpResponse("pong")
 
 
 @login_required(login_url='/admin/login/')

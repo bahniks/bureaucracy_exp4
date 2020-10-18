@@ -254,7 +254,7 @@
             return;
           }
           if(keys.includes(event.key)) {
-            if(cumTime < hSize*4 / speed || processing) {
+            if(cumTime < hSize*4 / speed || processing || paused) {
               return;
             } else {
               released = false;
@@ -348,17 +348,28 @@
         var processing = false;
         async function saveData(data) {
           processing = true;
-          response = await fetch(window.location.href, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRFToken': csrftoken,
-            },
-            body: JSON.stringify(data),
-          }).then(processing = false);
+          try {
+            response = await fetch(window.location.href, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+              },
+              body: JSON.stringify(data),
+            }).then(response => {
+                processing = false; 
+                if(!(response.status >= 200 && response.status < 300)) {
+                  pauseNumber -= 1;
+                  pauseTask(error = true);                  
+                }              
+              });
+          } catch(err) {
+            pauseNumber -= 1;
+            pauseTask(error = true);
+          }
         }
 
-        function pauseTask() {
+        function pauseTask(error = false) {
           if(!paused) {
             if(pauseNumber == totalPauses && !isPractice) {
               return;
@@ -372,25 +383,40 @@
           context.fillStyle = "black";
           context.textAlign = "center";
           context.textBaseline = "middle";
-          context.fillText("Experiment znovu spustíte zmáčknutím tlačítka MEZERNÍK.", window.innerWidth/2, window.innerHeight/2 - 60);
+          if(error) {
+            context.fillText("Experiment byl zastaven kvůli problému s připojením.", window.innerWidth/2, window.innerHeight/2 - 175);
+            context.fillText("Zkontrolujte své připojení k internetu.", window.innerWidth/2, window.innerHeight/2 - 125);
+          }
+          context.fillText("Experiment znovu spustíte zmáčknutím tlačítka MEZERNÍK.", window.innerWidth/2, window.innerHeight/2 - 75);
           if(!isPractice) {
-            context.fillText("Toto byla vaše " + pauseNumber.toString() + ". pauza z celkových " + totalPauses.toString() + ".", window.innerWidth/2, window.innerHeight/2 - 20);
+            context.fillText("Toto byla vaše " + pauseNumber.toString() + ". pauza z celkových " + totalPauses.toString() + ".", window.innerWidth/2, window.innerHeight/2 - 25);
             if(pauseNumber == totalPauses) {
-              context.fillText("Experiment nemůže být již pauzován.", window.innerWidth/2, window.innerHeight/2 + 20);
+              context.fillText("Experiment nemůže být již pauzován.", window.innerWidth/2, window.innerHeight/2 + 25);
             }
           }
           if(window.innerWidth < minimumWidth || window.innerHeight < minimumHeight) {
-            context.fillText(`Okno experimentu musí mít velikost alespoň ${minimumWidth}x${minimumHeight} pixelů!`, window.innerWidth/2, window.innerHeight/2 + 60);
-            context.fillText("Zvětšete okno a zmáčkněte tlačítko MEZERNÍK.", window.innerWidth/2, window.innerHeight/2 + 100);
+            context.fillText(`Okno experimentu musí mít velikost alespoň ${minimumWidth}x${minimumHeight} pixelů!`, window.innerWidth/2, window.innerHeight/2 + 75);
+            context.fillText("Zvětšete okno a zmáčkněte tlačítko MEZERNÍK.", window.innerWidth/2, window.innerHeight/2 + 125);
           }
         }
 
-        function unpauseTask() {
+        async function unpauseTask() {
           if(window.innerWidth < minimumWidth || window.innerHeight < minimumHeight) {
+            return;
+          }
+          var url = window.location.href.split("/");
+          var pingurl = url.slice(0, url.length - 2).join("/") + "/" + "ping" + "/";
+          try {
+            var online = await fetch(pingurl);
+            if(!(online.status >= 200 && online.status < 300)) {
+              return;
+            }
+          } catch (err) {
             return;
           }
           lastTime = undefined;
           paused = false;
+          processing = false; 
           currentObject.y = window.innerHeight/2;
           currentObject.size = hSize;
           window.requestAnimFrame(animate);
