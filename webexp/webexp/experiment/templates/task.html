@@ -504,8 +504,6 @@
               tooManyBreaks();
             }
             pauseTask();
-          } else if (document.visibilityState == "visible" && !paused && pauseNumber != totalPauses) {
-            unpauseTask();
           }
         }
 
@@ -513,7 +511,11 @@
           context.clearRect(0, 0, canvas.width, canvas.height);
           createPots();
           createInfo();
-          window.requestAnimFrame(animate);
+          if(paused) {
+            pauseTask();
+          } else {
+            window.requestAnimFrame(animate);
+          }
         }
 
         function displayCountdown(num) {
@@ -522,7 +524,6 @@
           context.textAlign = "center";
           context.textBaseline = "middle";
           if(paused) {
-            pauseNumber -= 1;
             pauseTask();
           } else if(num == 0) {
             setTimeout(startTask, 1000);
