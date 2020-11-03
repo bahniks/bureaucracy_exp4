@@ -40,7 +40,7 @@ def manager(request, code = "", page = 0):
             elif validCode.page != 0:
                 return displayError(request, "Experiment byl ukončen z důvodu neaktivity.")
             elif len(Participant.objects.filter(status = "finished")) >= 300: # pylint: disable=no-member
-                return displayError(request, "Experimentu se již nelze zúčastnit. Počet účastníků dosáhl limitu.")
+                return displayError(request, "Tento sběr dat byl již ukončen, brzy vás ale pozveme do dalšího výzkumu.")
             request.session["participantId"] = str(code)
             request.session["context"] = {}
             request.session["taskStarted"] = False
