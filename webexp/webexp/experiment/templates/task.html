@@ -93,7 +93,6 @@
               "shape1": potShapes[0],
               "shape2": potShapes[1],
               "shape3": potShapes[2],    
-              "condition": condition,
               "practice": isPractice,
               "lastTrial": trial == totalTrials,
             });
@@ -227,6 +226,9 @@
 
         function createInfo() {
           context.font = font;
+          context.fillStyle = "red";
+          context.textAlign = "left";
+          context.fillText("\u2716 ".repeat(mistakeStreak), hSize, vSize/5);
           context.fillStyle = "black";
           context.textAlign = "center";
           context.textBaseline = "middle";
@@ -266,12 +268,16 @@
             }          
             // if color is NOT correct
             if(currentObject.color != potColors[key-1]) {
+              mistakeStreak++;
               charity -= charityLoss;
               if(isPractice) {
                 previousCorrect = false;
               }
-            } else if(isPractice) {
-              previousCorrect = true;
+            } else {
+              mistakeStreak = 0;
+              if(isPractice) {
+                previousCorrect = true;
+              }
             }      
             reward += sortReward;
             saveData({
@@ -293,7 +299,6 @@
               "shape1": potShapes[0],
               "shape2": potShapes[1],
               "shape3": potShapes[2],    
-              "condition": condition,
               "practice": isPractice,
               "lastTrial": trial == totalTrials,
             });
@@ -332,13 +337,6 @@
             setTimeout(refresh, 2000);
           } else {
             trial++;
-            if(trial > halfTrials) {
-              if(condition == "small_first") {
-                bribeSizes = bribeSizesAll.slice(3, 6);
-              } else if(condition == "big_first") {
-                bribeSizes = bribeSizesAll.slice(0, 3);
-              }
-            }
             changePotsColors();
             currentObject = createObject(); 
             cumTime = 0;
@@ -431,7 +429,7 @@
         // settings
         const initialCharity = 2000;
         const bribeProbability = 0.225;
-        const bribeSizesAll = [30, 60, 90, 120, 150, 180];
+        const bribeSizes = [30, 60, 90, 120, 150, 180];
         const charityLoss = 200;
         const speed = 3;
         const sortReward = 3;
@@ -440,21 +438,11 @@
         const totalPauses = 3;
         const minimumHeight = 700;
         const minimumWidth = 1000;
+        const maxMistakes = 4;
         if(isPractice) {
           var totalTrials = 10;
         } else {
-          var totalTrials = 200;
-        }
-        var halfTrials = totalTrials / 2;
-
-        // condition
-        var condition = sample(["small_first", "control", "big_first"]);
-        if(condition == "small_first") {
-          var bribeSizes = bribeSizesAll.slice(0, 3);
-        } else if(condition == "big_first") {
-          var bribeSizes = bribeSizesAll.slice(3, 6);
-        } else {
-          var bribeSizes = bribeSizesAll;
+          var totalTrials = 20;  // testing
         }
 
         // current state
@@ -464,6 +452,7 @@
         var previousCorrect = undefined;
         var paused = false;
         var pauseNumber = 0;
+        var mistakeStreak = 0;
 
         // initialization
         var canvas = document.getElementById('myCanvas');

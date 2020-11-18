@@ -10,6 +10,7 @@ class Participant(models.Model):
     status = models.CharField(max_length=50, default="NA")
     start = models.DateTimeField(auto_now_add=True)
     end = models.DateTimeField(auto_now=True)
+    condition = models.CharField(max_length=20, default="NA")
 
     def __str__(self):
         field_values = []
@@ -38,7 +39,6 @@ class Trial(models.Model):
     shape1 = models.CharField(max_length=10)	
     shape2 = models.CharField(max_length=10)	
     shape3 = models.CharField(max_length=10)
-    condition = models.CharField(max_length=12, default="NA")
 
     def __str__(self):
         field_values = []

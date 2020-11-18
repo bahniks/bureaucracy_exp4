@@ -11,6 +11,7 @@ urlpatterns = [
     path('delete_data/', views.delete, name='delete_data'),
     # path("clear", views.clear, name = "clear"), # for testing
     path('participants/', views.showParticipants, name='show_participants'),
+    path('logs/', views.showLogs, name='show_logs'),
     path('participant_data/', views.showParticipantLinks, name='show_participants_links'),
     path('data/<uuid:code>/', views.showData, name='show_data'),
     path("download_trials/", views.downloadTrials, name='download_trials'),
@@ -21,4 +22,5 @@ urlpatterns = [
     path("download_codes/<str:filename>/", views.downloadCodes, name='download_codes_file'),
     path("download_logs/", views.downloadLogs, name='download_logs'),
     path("download_logs/<str:filename>/", views.downloadLogs, name='download_logs_file'),
+    path("summary/", views.summary, name='summary'),
 ]

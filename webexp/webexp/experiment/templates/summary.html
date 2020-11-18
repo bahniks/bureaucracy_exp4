@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block body %}
+    <div class="main wide">
+        <p>
+            <ul> 
+                <li>participants: {{ participants }}</li>
+                <li>unfinished: {{ unfinished }}</li>
+                <li>total rewards: {{ rewards }}</li>
+                {% for charity, value in charities.items %} 
+                    <li>{{ charity }}: {{ value }}</li>
+                {% endfor %} 
+            </ul> 
+        </p>      
+    </div>
+{% endblock %}

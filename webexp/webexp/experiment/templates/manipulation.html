@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block body %}
+    <div class="main wide">
+        <p>Všichni účastníci výzkumu dostávají za každý obrázek, který zatřídí, odměnu z rozmezí: {{ manipulation }}. Vy budete dostávat za každý zatřízený obrázek {{ reward }} bodů.</p>
+        <p>Po kliknutí na “Pokračovat” uvidíte, jak bude vypadat obrazovka během “ostré” verze úlohy.</p>   
+        <form method="POST">
+            {% csrf_token %}
+            <input type="submit" name="continue" value="Pokračovat" onclick="this.disabled=true; this.form.submit();">
+        </form>
+    </div>
+{% endblock %}
+
+

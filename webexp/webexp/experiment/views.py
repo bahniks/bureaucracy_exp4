@@ -10,6 +10,7 @@ from .models import Participant, Trial, Code, Log
 
 from collections import namedtuple
 from math import ceil
+from random import choice
 
 import re
 import json
@@ -22,6 +23,8 @@ charities = {
     "people_in_need": "Člověk v tísni",
     "red_cross": "Červený kříž"
     }
+reward = 7
+manipulation = {"low_range": "1-7", "medium_range": "4-10", "high_range": "7-13"}
 
 
 @never_cache
@@ -45,6 +48,10 @@ def manager(request, code = "", page = 0):
             request.session["context"] = {}
             request.session["taskStarted"] = False
             request.session["activity"] = 0 # just for the session expiry
+            participant = Participant(participant_id = str(code))
+            participant.condition = choice(["low_range", "medium_range", "high_range"])
+            participant.save()             
+            request.session["context"].update({"manipulation": manipulation[participant.condition]})  
             request.session.set_expiry(900)
     posted = request.method == 'POST'
     request.session["activity"] += 1
@@ -220,6 +227,17 @@ def codes(request, number = 5):
 
 
 @login_required(login_url='/admin/login/')
+def summary(request):
+    context = {"participants": len(Participant.objects.all().filter(status = "finished")), # pylint: disable=no-member
+               "unfinished":  len(Participant.objects.all().filter(status = "started")), # pylint: disable=no-member
+               "rewards": sum([int(participant.reward) for participant in Participant.objects.all().filter(status = "finished")]), # pylint: disable=no-member
+               "charities": {charities[charity]: sum([int(participant.charity_reward) for participant in Participant.objects.all().filter( # pylint: disable=no-member
+                   status = "finished").filter(charity = charity)]) for charity in charities.keys()}, # pylint: disable=no-member 
+               }
+    return HttpResponse(loader.get_template("summary.html").render(context, request))   
+
+
+@login_required(login_url='/admin/login/')
 def showData(request, code = ""):
     try:
         Participant.objects.get(participant_id = str(code)) # pylint: disable=no-member
@@ -242,6 +260,17 @@ def showParticipants(request):
     else:
         fields = [field.name for field in Participant._meta.get_fields()] # pylint: disable=no-member
         content = "\t".join(fields) + "\n" + "\n".join([str(participant) for participant in participants])
+        return HttpResponse(content, content_type='text/plain')
+
+
+@login_required(login_url='/admin/login/')
+def showLogs(request):
+    logs = Log.objects.all() # pylint: disable=no-member
+    if not logs:
+        return displayError(request, "V databázi nejsou žádné logy.")
+    else:
+        fields = [field.name for field in Log._meta.get_fields()] # pylint: disable=no-member
+        content = "\t".join(fields) + "\n" + "\n".join([str(log) for log in logs])
         return HttpResponse(content, content_type='text/plain')
 
 
@@ -288,20 +317,19 @@ def downloadData(request, table, filename):
 
 
 sequence = [
-    Frame("intro", intro, {}),
-    Frame("charity", charity, {}),
-    Frame("instructions1", intro, {}),
-    Frame("instructions2", intro, {}),
+    # Frame("intro", intro, {}),
+    # Frame("charity", charity, {}),
+    # Frame("instructions1", intro, {}),
+    # Frame("instructions2", intro, {}),
     Frame("instructions3", intro, {}),
     Frame("task", task, {"practice": 1}),
     Frame("instructions4", intro, {}),
+    Frame("manipulation", intro, {"reward": reward}),
     Frame("instructions5", intro, {}),
     Frame("instructions6", intro, {}),
     Frame("instructions7", intro, {}),
-    Frame("instructions8", intro, {}),
+    Frame("instructions8", intro, {"reward": reward}),
     Frame("task", task, {"practice": 0}),
     Frame("account", account, {}),
     Frame("ending", intro, {})
     ]
-
-
