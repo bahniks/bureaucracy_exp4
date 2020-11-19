@@ -216,7 +216,7 @@
               if(previousCorrect) {
                 context.fillText("Předchozí objekt byl zařazen SPRÁVNĚ.", window.innerWidth/2, window.innerHeight/2 + vSize/2);
               } else {
-                context.fillText("Předchozí objekt byl zařazen CHYBNĚ.", window.innerWidth/2, window.innerHeight/2 + vSize/2);
+                context.fillText("Předchozí objekt byl zařazen CHYBNĚ.", window.innerWidth/2, window.innerHeight/2 + vSize/2);             
               }
             } else {
               context.fillText("Předchozí objekt nebyl zařazen.", window.innerWidth/2, window.innerHeight/2 + vSize/2);
@@ -302,6 +302,10 @@
               "practice": isPractice,
               "lastTrial": trial == totalTrials,
             });
+            if(mistakeStreak == maxMistakes) {
+              maximumMistakesReached();
+              return;
+            }
             if(trial <= totalTrials) {
               newTrial();
             }
@@ -344,6 +348,7 @@
         }
 
         var processing = false;
+        
         async function saveData(data) {
           processing = true;
           try {
@@ -385,6 +390,10 @@
             context.fillText("Experiment byl zastaven kvůli problému s připojením.", window.innerWidth/2, window.innerHeight/2 - 175);
             context.fillText("Zkontrolujte své připojení k internetu.", window.innerWidth/2, window.innerHeight/2 - 125);
           }
+          if(mistakeStreak == maxMistakes & isPractice) {
+            context.fillText("Objekt byl zařazen počtvrté za sebou chybně. V ostré verzi by byl experiment ukončen.", window.innerWidth/2, window.innerHeight/2 - 175);
+            context.fillText("Nyní se křížky smažou a můžete pokračovat ve cvičené verzi.", window.innerWidth/2, window.innerHeight/2 - 125);
+          }
           context.fillText("Experiment znovu spustíte zmáčknutím tlačítka MEZERNÍK.", window.innerWidth/2, window.innerHeight/2 - 75);
           if(!isPractice) {
             context.fillText("Toto byla vaše " + pauseNumber.toString() + ". pauza z celkových " + totalPauses.toString() + ".", window.innerWidth/2, window.innerHeight/2 - 25);
@@ -417,6 +426,15 @@
           processing = false; 
           currentObject.y = window.innerHeight/2;
           currentObject.size = hSize;
+          if(mistakeStreak == maxMistakes & isPractice) {
+            mistakeStreak = 0;
+            if(trial == totalTrials) {
+              refresh();
+              return;
+            } else {
+              newTrial();
+            }
+          }
           window.requestAnimFrame(animate);
         }
 
@@ -424,6 +442,16 @@
           window.cancelAnimFrame(animationRequest);
           context.clearRect(0, 0, canvas.width, canvas.height);
           alert("Překročili jste maximální množství pauz. Experiment je ukončen. Můžete zavřít okno experimentu.");         
+        }
+
+        function maximumMistakesReached() {
+          window.cancelAnimFrame(animationRequest);
+          context.clearRect(0, 0, canvas.width, canvas.height); 
+          if(isPractice) {      
+            pauseTask();
+          } else {
+            alert("Objekt byl zařazen po čtvrté za sebou chybně. Experiment je ukončen. Můžete zavřít okno experimentu.");
+          }
         }
 
         // settings
@@ -442,7 +470,7 @@
         if(isPractice) {
           var totalTrials = 10;
         } else {
-          var totalTrials = 20;  // testing
+          var totalTrials = 200;
         }
 
         // current state
