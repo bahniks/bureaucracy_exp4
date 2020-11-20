@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block body %}
+    <div class="main wide">
+        <p>V následující části bude uvedena řada výroků.</p>
+        <p>Přečtěte si, prosím, postupně každý výrok a vždy se rozhodněte, jak moc s ním souhlasíte nebo nesouhlasíte.</p>
+        <br><br>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="submit" name="continue" value="Pokračovat" onclick="this.disabled=true; this.form.submit();">
+        </form>
+    </div>
+{% endblock %}
+
+

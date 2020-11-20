@@ -6,7 +6,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 
-from .models import Participant, Trial, Code, Log
+from .forms import MFQ1, MFQ2, questions1, questions2
+from .models import Participant, Trial, Code, Log, Question
 
 from collections import namedtuple
 from math import ceil
@@ -25,6 +26,7 @@ charities = {
     }
 reward = 7
 manipulation = {"low_range": "1-7", "medium_range": "4-10", "high_range": "7-13"}
+trials = 200
 
 
 @never_cache
@@ -176,6 +178,26 @@ def intro(request):
     pass
 
 
+
+def mfq1(request):
+    return mfq(request, MFQ1)
+
+def mfq2(request):
+    return mfq(request, MFQ2)
+
+def mfq(request, form_class):
+    form = form_class(request.POST)
+    correction = len(questions1) if form_class == MFQ2 else 0
+    length = len(questions2) if form_class == MFQ2 else len(questions1)
+    if form.is_valid():
+        for i in range(length):
+            question = Question(code = request.session["participantId"], question = i + 1 + correction, answer = form.cleaned_data["question" + str(i + correction)])
+            question.save()
+        return False
+    else:
+        return True
+
+
 def displayError(request, text):
     localContext = {"error": text}
     template = loader.get_template('error.html')
@@ -317,13 +339,17 @@ def downloadData(request, table, filename):
 
 
 sequence = [
-    # Frame("intro", intro, {}),
-    # Frame("charity", charity, {}),
-    # Frame("instructions1", intro, {}),
-    # Frame("instructions2", intro, {}),
+    #Frame("mfq", mfq, {"questions": questions1, "answers": answers1}),
+    Frame("mfq", mfq1, {"form": str(MFQ1())}),
+    Frame("mfq", mfq2, {"form": str(MFQ2())}),
+    Frame("intro", intro, {}),
+    Frame("questionnaire", intro, {}),
+    Frame("charity", charity, {}),
+    Frame("instructions1", intro, {}),
+    Frame("instructions2", intro, {}),
     Frame("instructions3", intro, {}),
     Frame("task", task, {"practice": 1}),
-    Frame("instructions4", intro, {}),
+    Frame("instructions4", intro, {"trials": trials}),
     Frame("manipulation", intro, {"reward": reward}),
     Frame("instructions5", intro, {}),
     Frame("instructions6", intro, {}),

@@ -70,3 +70,15 @@ class Log(models.Model):
         for field in self._meta.get_fields(): # pylint: disable=no-member
             field_values.append(str(getattr(self, field.name, '')))
         return '\t'.join(field_values)
+
+
+class Question(models.Model):
+    code = models.CharField(max_length=36)
+    question = models.IntegerField()
+    answer = models.IntegerField()
+    
+    def __str__(self):
+        field_values = []
+        for field in self._meta.get_fields(): # pylint: disable=no-member
+            field_values.append(str(getattr(self, field.name, '')))
+        return '\t'.join(field_values)

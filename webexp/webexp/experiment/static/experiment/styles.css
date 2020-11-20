@@ -75,3 +75,11 @@ img {
 div.wide {
     max-width: 960px;
 }
+
+ul {
+    list-style-type: none;
+}
+
+ul#horizontal_buttons li {
+    display: inline-block;
+}
