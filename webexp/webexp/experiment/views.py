@@ -339,7 +339,6 @@ def downloadData(request, table, filename):
 
 
 sequence = [
-    #Frame("mfq", mfq, {"questions": questions1, "answers": answers1}),
     Frame("mfq", mfq1, {"form": str(MFQ1())}),
     Frame("mfq", mfq2, {"form": str(MFQ2())}),
     Frame("intro", intro, {}),
