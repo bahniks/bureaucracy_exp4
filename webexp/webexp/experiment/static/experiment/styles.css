@@ -80,6 +80,18 @@ ul {
     list-style-type: none;
 }
 
-ul#horizontal_buttons li {
+ul.horizontal_buttons li {
     display: inline-block;
+}
+
+ul.horizontal_buttons {
+    margin-block-start: 0.4em;
+    margin-block-end: 1em;
+    padding-inline-start: 0px;
+}
+
+.errorlist {
+    color: red;
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
 }

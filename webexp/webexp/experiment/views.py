@@ -27,6 +27,8 @@ charities = {
 reward = 7
 manipulation = {"low_range": "1-7", "medium_range": "4-10", "high_range": "7-13"}
 trials = 200
+manipulation2 = {"low_range": "200-1400", "medium_range": "800-2000", "high_range": "1400-2600"}
+
 
 
 @never_cache
@@ -50,10 +52,6 @@ def manager(request, code = "", page = 0):
             request.session["context"] = {}
             request.session["taskStarted"] = False
             request.session["activity"] = 0 # just for the session expiry
-            participant = Participant(participant_id = str(code))
-            participant.condition = choice(["low_range", "medium_range", "high_range"])
-            participant.save()             
-            request.session["context"].update({"manipulation": manipulation[participant.condition]})  
             request.session.set_expiry(900)
     posted = request.method == 'POST'
     request.session["activity"] += 1
@@ -62,14 +60,22 @@ def manager(request, code = "", page = 0):
             participant = Participant.objects.get(participant_id = str(code)) # pylint: disable=no-member
         except ObjectDoesNotExist:
             participant = Participant(participant_id = str(code))
+            participant.condition = choice(["low_range", "medium_range", "high_range"]) 
+            request.session["context"].update({"manipulation": manipulation[participant.condition]})  
+            request.session["context"].update({"manipulation2": manipulation2[participant.condition]})
             participant.status = "started"
             participant.save()              
         if page != validCode.page:
             return displayError(request, "Toto není platná akce.")
-        if not sequence[validCode.page].function(request):
+        repeat = sequence[validCode.page].function(request)
+        if not repeat:
             # do not proceed to the next frame if returns True
             validCode.page += 1   
             validCode.save()
+        elif sequence[validCode.page].template == "mfq":
+            form = repeat
+            request.session["context"].update({"form": str(form)})
+            return render(request, "mfq.html", request.session["context"])
     else:
         if page != validCode.page:
             if validCode.page == len(sequence) - 1:
@@ -195,7 +201,7 @@ def mfq(request, form_class):
             question.save()
         return False
     else:
-        return True
+        return form
 
 
 def displayError(request, text):

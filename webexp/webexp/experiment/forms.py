@@ -55,9 +55,11 @@ answers2 = [(1, "zcela nesouhlasím"),
 
 class MFQ1(forms.Form):
     for n, question in enumerate(questions1):
-        locals()["question" + str(n)] = forms.ChoiceField(widget = forms.RadioSelect(attrs = {"id": "horizontal_buttons"}), choices = answers1, label = question)
+        locals()["question" + str(n)] = forms.ChoiceField(widget = forms.RadioSelect(attrs = {"class": "horizontal_buttons"}), choices = answers1, label = question, 
+                                                          error_messages={'required': 'Tato otázka je vyžadována.'})
 
 
 class MFQ2(forms.Form):
     for n, question in enumerate(questions2):
-        locals()["question" + str(n + len(questions1))] = forms.ChoiceField(widget = forms.RadioSelect(attrs = {"id": "horizontal_buttons"}), choices = answers2, label = question)
+        locals()["question" + str(n + len(questions1))] = forms.ChoiceField(widget = forms.RadioSelect(attrs = {"class": "horizontal_buttons"}), choices = answers2, label = question,
+                                                                            error_messages={'required': 'Tato otázka je vyžadována.'})

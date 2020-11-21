@@ -1,16 +1,20 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <script>
+    <!-- <script>
+        document.querySelectorAll('.horizontal_buttons').forEach(function(elem) {
+                elem.addEventListener('click', function() {...});
+            }
+        )
         function enableButton() {
             document.getElementById("submitButton").disabled = false;
         }
-    </script>
+    </script> -->
 
     <form method="post">
         {% csrf_token %}
-        {{ form }}
-        <input type="submit" name="continue" value="Pokračovat" class="horizontal-center" id="submitButton" disabled onclick="this.disabled=true; this.form.submit();">
+        {{ form }}        
+        <input type="submit" name="continue" value="Pokračovat" class="horizontal-center" id="submitButton" onclick="this.disabled=true; this.form.submit();">
     </form>
 {% endblock %}
 
