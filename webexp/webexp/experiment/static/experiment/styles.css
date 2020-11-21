@@ -95,3 +95,7 @@ ul.horizontal_buttons {
     margin-block-start: 0.5em;
     margin-block-end: 0.5em;
 }
+
+div.verywide {
+    max-width: 1200px;
+}

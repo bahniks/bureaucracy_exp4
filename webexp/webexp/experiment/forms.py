@@ -26,6 +26,8 @@ answers1 = [(1, "zcela nepodstatné"),
             (5, "velmi podstatné"), 
             (6, "obzvlášť podstatné")]
 
+mfq1_instructions = "Při posuzování, zda je něco správné nebo špatné, berou lidé v potaz různé kritéria. Do jaké míry jsou pro Vás následující skutečnosti důležité, když hodnotíte, zda bylo něco správné nebo špatné? Ohodnoťte prosím každé kritérium pomocí této škály:"
+
 questions2 = """
 Soucit s těmi, kdo trpí, je nejdůležitější ctnost.
 Když zákonodárci tvoří zákony, nejdůležitějším principem by mělo být zajištění spravedlivého zacházení pro všechny.
@@ -51,6 +53,11 @@ answers2 = [(1, "zcela nesouhlasím"),
             (4, "trochu souhlasím"), 
             (5, "docela souhlasím"), 
             (6, "silně souhlasím")]
+
+mfq2_instructions = """V následující části bude uvedena řada výroků.
+Přečtěte si, prosím, postupně každý výrok a vždy se rozhodněte, jak moc s ním souhlasíte nebo nesouhlasíte."""
+
+
 
 
 class MFQ1(forms.Form):

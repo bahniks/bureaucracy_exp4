@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 
-from .forms import MFQ1, MFQ2, questions1, questions2
+from .forms import MFQ1, MFQ2, questions1, questions2, mfq1_instructions, mfq2_instructions
 from .models import Participant, Trial, Code, Log, Question
 
 from collections import namedtuple
@@ -28,7 +28,6 @@ reward = 7
 manipulation = {"low_range": "1-7", "medium_range": "4-10", "high_range": "7-13"}
 trials = 200
 manipulation2 = {"low_range": "200-1400", "medium_range": "800-2000", "high_range": "1400-2600"}
-
 
 
 @never_cache
@@ -345,8 +344,8 @@ def downloadData(request, table, filename):
 
 
 sequence = [
-    Frame("mfq", mfq1, {"form": str(MFQ1())}),
-    Frame("mfq", mfq2, {"form": str(MFQ2())}),
+    Frame("mfq", mfq1, {"form": str(MFQ1()), "scale_instructions": str(mfq1_instructions)}),
+    Frame("mfq", mfq2, {"form": str(MFQ2()), "scale_instructions": str(mfq2_instructions)}),
     Frame("intro", intro, {}),
     Frame("questionnaire", intro, {}),
     Frame("charity", charity, {}),
