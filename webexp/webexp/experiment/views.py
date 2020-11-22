@@ -353,10 +353,10 @@ def downloadData(request, table, filename):
 
 
 sequence = [
-    Frame("intro", intro, {}),
-    Frame("questionnaire", intro, {}),
-    Frame("mfq", mfq1, {"form": str(MFQ1()), "scale_instructions": str(mfq1_instructions)}),
-    Frame("mfq", mfq2, {"form": str(MFQ2()), "scale_instructions": str(mfq2_instructions)}),
+    # Frame("intro", intro, {}),
+    # Frame("questionnaire", intro, {}),
+    Frame("mfq", mfq1, {"form": str(MFQ1().as_ul()), "scale_instructions": str(mfq1_instructions)}),
+    Frame("mfq", mfq2, {"form": str(MFQ2().as_ul()), "scale_instructions": str(mfq2_instructions)}),
     Frame("charity", charity, {}),
     Frame("instructions1", intro, {}),
     Frame("instructions2", intro, {}),

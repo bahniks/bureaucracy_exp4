@@ -1,9 +1,41 @@
 {% extends "base.html" %}
 
 {% block body %}
-<div class="main wide">
+
+<script>
+    function shuffle(elems) {
+        allElems = (function(){
+            var ret = [], l = elems.length;
+            while (l--) { ret[ret.length] = elems[l]; }
+            return ret;
+        })();
+
+        var shuffled = (function(){
+            var l = allElems.length, ret = [];
+            while (l--) {
+                var random = Math.floor(Math.random() * allElems.length),
+                    randEl = allElems[random].cloneNode(true);
+                allElems.splice(random, 1);
+                ret[ret.length] = randEl;
+            }
+            return ret; 
+        })(), l = elems.length;
+
+        while (l--) {
+            elems[l].parentNode.insertBefore(shuffled[l], elems[l].nextSibling);
+            elems[l].parentNode.removeChild(elems[l]);
+        }
+    }
+    
+    document.addEventListener("DOMContentLoaded", function () {
+        shuffle( document.querySelectorAll("#myForm>li") );        
+        myForm.appendChild(document.getElementById('submitButton'));
+    });
+</script>
+
+<div class="main wide questions">
     <p style="margin-bottom: 30px;">{{ scale_instructions }}</p>
-    <form method="post" style="padding-bottom: 50px;">
+    <form method="post" style="padding-bottom: 50px;" id="myForm">
         {% csrf_token %}
         {{ form }}        
         <input type="submit" name="continue" value="Pokračovat" class="horizontal-center" id="submitButton">

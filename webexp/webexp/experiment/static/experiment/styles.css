@@ -106,3 +106,7 @@ ul.horizontal_buttons::after {
     display: block;
     border-bottom: 1px solid black;
   }
+
+.questions>form>li {
+    list-style-type: none;
+}
