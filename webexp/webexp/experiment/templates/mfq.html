@@ -6,7 +6,7 @@
     <form method="post">
         {% csrf_token %}
         {{ form }}        
-        <input type="submit" name="continue" value="Pokračovat" class="horizontal-center" id="submitButton" onclick="this.disabled=true; this.form.submit();">
+        <input type="submit" name="continue" value="Pokračovat" class="horizontal-center" id="submitButton"> <!--  onclick="this.disabled=true; this.form.submit();"> -->
     </form>
 </div>
 {% endblock %}
