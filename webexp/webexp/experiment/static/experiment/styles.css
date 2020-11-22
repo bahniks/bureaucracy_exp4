@@ -90,12 +90,12 @@ ul.horizontal_buttons {
     padding-inline-start: 0px;
 }
 
+ul.horizontal_buttons li label {
+    font-size: large;
+}
+
 .errorlist {
     color: red;
     margin-block-start: 0.5em;
     margin-block-end: 0.5em;
-}
-
-div.verywide {
-    max-width: 1200px;
 }

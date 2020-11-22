@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
 {% block body %}
-<div class="main verywide">
+<div class="main wide">
     <p style="margin-bottom: 30px;">{{ scale_instructions }}</p>
     <form method="post">
         {% csrf_token %}
         {{ form }}        
-        <input type="submit" name="continue" value="Pokračovat" class="horizontal-center" id="submitButton"> <!--  onclick="this.disabled=true; this.form.submit();"> -->
+        <input type="submit" name="continue" value="Pokračovat" class="horizontal-center" id="submitButton">
     </form>
 </div>
 {% endblock %}

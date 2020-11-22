@@ -196,8 +196,13 @@ def mfq(request, form_class):
     length = len(questions2) if form_class == MFQ2 else len(questions1)
     if form.is_valid():
         for i in range(length):
-            question = Question(code = request.session["participantId"], question = i + 1 + correction, answer = form.cleaned_data["question" + str(i + correction)])
-            question.save()
+            try:
+                qnum = i + 1 + correction
+                code = request.session["participantId"]
+                question = Question(cqID = code + str(qnum), code = code, question = qnum, answer = form.cleaned_data["question" + str(i + correction)])
+                question.save()
+            except:
+                pass
         return False
     else:
         return form
@@ -344,10 +349,10 @@ def downloadData(request, table, filename):
 
 
 sequence = [
-    Frame("intro", intro, {}),
-    Frame("questionnaire", intro, {}),
     Frame("mfq", mfq1, {"form": str(MFQ1()), "scale_instructions": str(mfq1_instructions)}),
     Frame("mfq", mfq2, {"form": str(MFQ2()), "scale_instructions": str(mfq2_instructions)}),
+    Frame("intro", intro, {}),
+    Frame("questionnaire", intro, {}),
     Frame("charity", charity, {}),
     Frame("instructions1", intro, {}),
     Frame("instructions2", intro, {}),

@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 
 
 class Participant(models.Model):
@@ -73,6 +74,7 @@ class Log(models.Model):
 
 
 class Question(models.Model):
+    cqID = models.CharField(max_length=40, unique = True)
     code = models.CharField(max_length=36)
     question = models.IntegerField()
     answer = models.IntegerField()
