@@ -48,10 +48,10 @@ Cudnost je důležitá a hodnotná ctnost.
 """.strip().split("\n")
 
 answers2 = [(1, "zcela nesouhlasím"), 
-            (2, "docela nesouhlasím"), 
-            (3, "trochu nesouhlasím"), 
-            (4, "trochu souhlasím"), 
-            (5, "docela souhlasím"), 
+            (2, "nesouhlasím"), 
+            (3, "spíše nesouhlasím"), 
+            (4, "spíše souhlasím"), 
+            (5, "souhlasím"), 
             (6, "silně souhlasím")]
 
 mfq2_instructions = """V následující části bude uvedena řada výroků.

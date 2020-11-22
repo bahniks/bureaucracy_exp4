@@ -82,11 +82,12 @@ ul {
 
 ul.horizontal_buttons li {
     display: inline-block;
+    margin-bottom: 20px;
 }
 
 ul.horizontal_buttons {
-    margin-block-start: 0.4em;
-    margin-block-end: 1em;
+    margin-block-start: 0.3em;
+    margin-block-end: 1.2em;
     padding-inline-start: 0px;
 }
 
@@ -99,3 +100,9 @@ ul.horizontal_buttons li label {
     margin-block-start: 0.5em;
     margin-block-end: 0.5em;
 }
+
+ul.horizontal_buttons::after {
+    content: " ";
+    display: block;
+    border-bottom: 1px solid black;
+  }
