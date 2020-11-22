@@ -333,6 +333,10 @@ def downloadTrials(request, filename = "trials"):
     return downloadData(request, Trial, filename)
 
 @login_required(login_url='/admin/login/')
+def downloadTrials(request, filename = "questions"):
+    return downloadData(request, Question, filename)
+
+@login_required(login_url='/admin/login/')
 def downloadLogs(request, filename = "logs"):
     return downloadData(request, Log, filename)
 
