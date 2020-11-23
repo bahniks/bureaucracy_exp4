@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 
-from .forms import MFQ1, MFQ2, questions1, questions2, mfq1_instructions, mfq2_instructions
+from .forms import MFQ1, MFQ2, questions1, questions2, mfq1_instructions, mfq2_instructions, perception_instructions, Perception, questions3
 from .models import Participant, Trial, Code, Log, Question
 
 from collections import namedtuple
@@ -24,10 +24,10 @@ charities = {
     "people_in_need": "Člověk v tísni",
     "red_cross": "Červený kříž"
     }
-reward = 7
-manipulation = {"low_range": "1-7", "medium_range": "4-10", "high_range": "7-13"}
+reward = 5
+manipulation = {"low_range": "1-5", "medium_range": "2-8", "high_range": "5-20"}
 trials = 200
-manipulation2 = {"low_range": "200-1400", "medium_range": "800-2000", "high_range": "1400-2600"}
+manipulation2 = {"low_range": "200-1000", "medium_range": "400-1600", "high_range": "1000-4000"}
 
 
 @never_cache
@@ -183,17 +183,23 @@ def intro(request):
     pass
 
 
-
 def mfq1(request):
-    return mfq(request, MFQ1)
+    correction = 0
+    length = len(questions1)
+    return mfq(request, MFQ1, correction, length)
 
 def mfq2(request):
-    return mfq(request, MFQ2)
+    correction = len(questions1)
+    length = len(questions2)
+    return mfq(request, MFQ2, correction, length)
 
-def mfq(request, form_class):
+def perception(request):
+    correction = len(questions1) + len(questions2)
+    length = len(questions3)
+    return mfq(request, Perception, correction, length)
+
+def mfq(request, form_class, correction, length):
     form = form_class(request.POST)
-    correction = len(questions1) if form_class == MFQ2 else 0
-    length = len(questions2) if form_class == MFQ2 else len(questions1)
     if form.is_valid():
         for i in range(length):
             try:
@@ -369,6 +375,8 @@ sequence = [
     Frame("instructions7", intro, {}),
     Frame("instructions8", intro, {"reward": reward}),
     Frame("task", task, {"practice": 0}),
+    Frame("questionnaire2", intro, {}),
+    Frame("mfq", perception, {"form": str(Perception().as_ul()), "scale_instructions": str(perception_instructions)}),
     Frame("account", account, {}),
     Frame("ending", intro, {})
     ]
