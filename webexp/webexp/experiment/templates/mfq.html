@@ -31,6 +31,18 @@
         shuffle( document.querySelectorAll("#myForm>li") );        
         myForm.appendChild(document.getElementById('submitButton'));
     });
+
+    function submitting() {
+        var buttons = document.querySelectorAll("#myForm>li");
+        for(i = 0; i < buttons.length; i++) {
+            if(!buttons[i].value) {
+                document.getElementById("submitButton").disabled = false;
+                return;
+            }
+        }
+        document.getElementById("submitButton").disabled = false;
+        document.getElementById("myForm").submit();
+    }
 </script>
 
 <div class="main wide questions">
@@ -38,7 +50,7 @@
     <form method="post" style="padding-bottom: 50px;" id="myForm">
         {% csrf_token %}
         {{ form }}        
-        <input type="submit" name="continue" value="Pokračovat" class="horizontal-center" id="submitButton">
+        <input type="submit" name="continue" value="Pokračovat" class="horizontal-center" id="submitButton" onclick="submitting();">
     </form>
 </div>
 {% endblock %}

@@ -15,7 +15,7 @@
         <img src="{% static "experiment/instruction_1.gif" %}" alt="Objects" height="200px" style="padding-top: 0px; padding-bottom: 0px;">
         <form method="POST">
             {% csrf_token %}
-            <input type="submit" name="continue" value="Pokračovat" onclick="this.disabled=true; this.form.submit();">
+            <input type="submit" name="continue" class="horizontal-center" value="Pokračovat" onclick="this.disabled=true; this.form.submit();">
         </form>
     </div>
 {% endblock %}

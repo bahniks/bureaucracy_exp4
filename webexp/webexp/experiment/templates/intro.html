@@ -18,7 +18,7 @@
         </p>      
         <form method="POST">
             {% csrf_token %}
-            <input type="submit" name="continue" value="Pokračovat" id="continue" disabled onclick="this.disabled=true; this.form.submit();">
+            <input type="submit" name="continue" value="Pokračovat" class="horizontal-center" id="continue" disabled onclick="this.disabled=true; this.form.submit();">
         </form>
         <p id="problem" height="200px" class="horizontal-center">
         </p>
