@@ -2,9 +2,10 @@
 {% block body %}
     <div class="main">
         <p>
-            Níže vidíte, co se stane, když žlutý čtverec, jenž jste viděli dříve, zatřídíte dle BARVY. 
+            Níže vidíte, co se stane, když žlutý čtverec, jenž jste viděli dříve, zatřídíte dle BARVY.
+            Výše vaší odměny za zatřídění jednoho obrázku je <b>X = {{ reward }} bodů</b>. Vaše odměna po zatřídění obrázku dle TVARU by tedy byla 25 bodů.
             <br><br>
-            Až si obrázek prohlédnete, klikněte na “Pokračovat”.        
+            Až si obrázek prohlédnete, klikněte na “Pokračovat”.                  
         </p>      
         {% load static %}
         <img src="{% static "experiment/screen3.png" %}" alt="Example screen 1" width="800px">

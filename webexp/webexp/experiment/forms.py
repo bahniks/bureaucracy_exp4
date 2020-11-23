@@ -48,8 +48,8 @@ Když lidé usilují o společný cíl, měli by mít stejný podíl na výsledn
 Všichni členové společnosti by měli ideálně skončit se zhruba stejným množstvím peněz.
 Spravedlnost pro mě znamená, že k lidem by se mělo přistupovat stejně, bez ohledu na jejich odlišnosti.
 Při rozdělování bonusu je podle mě spravedlivé, aby všichni dostali stejný podíl.
-Myslím si, že některé skupiny lidí čelí mnohem větším překážkám v dosažení úspěchu než jiné a k překonání těchto překážek je nezbytné, aby se společnost více snažila o jejich odstranění a poskytnutí dodatečné podpory. 
-Spravedlnost pro mě znamená, že každý dostane, co potřebuje, aby uspěl, i když to znamená, že někteří lidé dostanou víc než jiní, protože od začátku čelí větším překážkám. 
+Myslím si, že některé skupiny lidí čelí mnohem větším překážkám v dosažení úspěchu než jiné a k překonání těchto překážek je nezbytné, aby se společnost více snažila o jejich odstranění a poskytnutí dodatečné podpory.
+Spravedlnost pro mě znamená, že každý dostane, co potřebuje, aby uspěl, i když to znamená, že někteří lidé dostanou víc než jiní, protože od začátku čelí větším překážkám.
 Obecně by lidé, kteří pracují víc, měli být placeni víc než jejich kolegové na stejné úrovni, i když to povede k nerovným výsledkům.
 Když děti soupeří ve sportovních disciplínách, myslím si, že je důležité ocenit vítěze za jejich úspěchy.
 Při rozdělování bonusu je podle mě spravedlivé, aby každý dostal podíl dle svých zásluh: lidé, co přispěli nejvíce, by měli dostat největší odměnu.
@@ -65,8 +65,8 @@ answers2 = [(1, "zcela nesouhlasím"),
             (5, "souhlasím"), 
             (6, "silně souhlasím")]
 
-mfq2_instructions = """<p>V této části je uvedena řada výroků.</p>
-<p>Přečtěte si, prosím, postupně každý výrok a vždy se rozhodněte, jak moc s ním souhlasíte nebo nesouhlasíte.</p>"""
+mfq2_instructions = """<p>V této části je uvedena řada výroků.<br>
+Přečtěte si, prosím, postupně každý výrok a vždy se rozhodněte, jak moc s ním souhlasíte nebo nesouhlasíte.</p><br>"""
 
 
 questions3 = """
@@ -89,8 +89,8 @@ Ztráta pro charitu za špatné zatřídění dle BARVY byla vysoká.
 Ztráta pro charitu za špatné zatřídění dle BARVY motivovala ke správnému třídění.
 Počáteční body přidělené charitě byly nízké.
 Počáteční body přidělené charitě byly dostatečné.
-Výběr charitativní organizace byl příliš malý.
-Výběr charitativní organizace byl dostatečný.
+Výběr charitativních organizací byl příliš malý.
+Výběr charitativních organizací byl dostatečný.
 Instrukce k úloze byly srozumitelné.
 Instrukce k úloze byly komplikované.
 Instrukce k úloze byly dlouhé.
