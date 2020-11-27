@@ -266,7 +266,8 @@ def codes(request, number = 5):
 
 @login_required(login_url='/admin/login/')
 def summary(request):
-    context = {"participants": len(Participant.objects.all().filter(status = "finished")), # pylint: disable=no-member
+    context = {"codes": len(Code.objects.all()), # pylint: disable=no-member,
+               "participants": len(Participant.objects.all().filter(status = "finished")), # pylint: disable=no-member
                "unfinished":  len(Participant.objects.all().filter(status = "started")), # pylint: disable=no-member
                "rewards": sum([int(participant.reward) for participant in Participant.objects.all().filter(status = "finished")]), # pylint: disable=no-member
                "charities": {charities[charity]: sum([int(participant.charity_reward) for participant in Participant.objects.all().filter( # pylint: disable=no-member
