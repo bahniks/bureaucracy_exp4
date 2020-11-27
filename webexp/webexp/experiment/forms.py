@@ -25,12 +25,12 @@ answers1 = [(1, "zcela nepodstatné"),
             (5, "velmi podstatné"), 
             (6, "obzvlášť podstatné")]
 
-mfq1_instructions = "Při posuzování, zda je něco správné nebo špatné, berou lidé v potaz různé kritéria. Do jaké míry jsou pro Vás následující skutečnosti důležité, když hodnotíte, zda bylo něco správné nebo špatné?"
+mfq1_instructions = "Při posuzování, zda je něco správné nebo špatné, berou lidé v potaz různá kritéria. Do jaké míry jsou pro Vás následující skutečnosti důležité, když hodnotíte, zda bylo něco správné nebo špatné?"
 
 questions2 = """
 Soucit s těmi, kdo trpí, je nejdůležitější ctnost.
 Když zákonodárci tvoří zákony, nejdůležitějším principem by mělo být zajištění spravedlivého zacházení pro všechny.
-Jsem hrdý/ hrdá na historii své země.
+Jsem hrdý / hrdá na historii své země.
 Všechny děti by se měly naučit respektu k autoritám.
 Lidé by neměli dělat nechutné věci, ani když jimi nikomu neškodí.
 Je lepší dělat dobro než zlo.
@@ -46,13 +46,13 @@ Kdybych byl(a) v armádě a nesouhlasil(a) bych s rozkazy nadřízeného, stejn�
 Sexuální zdrženlivost je důležitá a hodnotná ctnost.
 Když lidé usilují o společný cíl, měli by mít stejný podíl na výsledné odměně, i když někteří pracovali usilovněji a přispěli víc než jiní.
 Všichni členové společnosti by měli ideálně skončit se zhruba stejným množstvím peněz.
-Spravedlnost pro mě znamená, že k lidem by se mělo přistupovat stejně, bez ohledu na jejich odlišnosti.
-Při rozdělování bonusu je podle mě spravedlivé, aby všichni dostali stejný podíl.
+Spravedlnost pro mě znamená, že by se k lidem mělo přistupovat stejně, bez ohledu na jejich odlišnosti.
+Při rozdělování odměn je podle mě spravedlivé, aby všichni dostali stejný podíl.
 Myslím si, že některé skupiny lidí čelí mnohem větším překážkám v dosažení úspěchu než jiné a k překonání těchto překážek je nezbytné, aby se společnost více snažila o jejich odstranění a poskytnutí dodatečné podpory.
 Spravedlnost pro mě znamená, že každý dostane, co potřebuje, aby uspěl, i když to znamená, že někteří lidé dostanou víc než jiní, protože od začátku čelí větším překážkám.
 Obecně by lidé, kteří pracují víc, měli být placeni víc než jejich kolegové na stejné úrovni, i když to povede k nerovným výsledkům.
 Když děti soupeří ve sportovních disciplínách, myslím si, že je důležité ocenit vítěze za jejich úspěchy.
-Při rozdělování bonusu je podle mě spravedlivé, aby každý dostal podíl dle svých zásluh: lidé, co přispěli nejvíce, by měli dostat největší odměnu.
+Při rozdělování odměny je podle mě spravedlivé, aby každý dostal podíl dle svých zásluh: lidé, co přispěli nejvíce, by měli dostat největší odměnu.
 Spravedlnost pro mě znamená, že by lidé měli být odměňováni podle svého přínosu.
 Opravdu mě rozčiluje, když vidím jak někdo nedělá svůj spravedlivý díl práce.
 Když pracuji s ostatními, vždy mám přehled o tom, kdo přispěl víc a kdo méně.
@@ -77,7 +77,7 @@ Prováděný úkol byl únavný.
 Prováděný úkol byl dlouhý.
 Odměna za každé zatřídění byla dostatečná.
 Odměna za každé zatřídění byla spravedlivá.
-Odměna za každé zatřídění byla v porovnání s odměnou ostatních nespravedlivá.
+Má odměna za každé zatřídění byla v porovnání s odměnou ostatních nespravedlivá.
 Odměna za každé zatřídění byla nízká.
 S odměnou za každé zatřídění jsem byl(a) spokojený/-á.
 Se svým výkonem v úloze jsem byl(a) spokojený/-á.
@@ -85,7 +85,7 @@ Obrazce se pohybovaly příliš pomalu.
 Obrazce se pohybovaly příliš rychle.
 Částky nabízené za zatřídění dle TVARU byly obvykle vysoké.
 Částky nabízené za zatřídění dle TVARU byly obvykle nízké.
-Ztráta pro charitu za špatné zatřídění dle BARVY byla vysoká. 
+Ztráta pro charitu za špatné zatřídění dle BARVY byla vysoká.
 Ztráta pro charitu za špatné zatřídění dle BARVY motivovala ke správnému třídění.
 Počáteční body přidělené charitě byly nízké.
 Počáteční body přidělené charitě byly dostatečné.

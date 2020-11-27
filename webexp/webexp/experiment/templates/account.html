@@ -17,7 +17,7 @@
     <form method="POST" id="accountForm">
         {% csrf_token %}
         <input type="text" name="account" maxlength="50" autofocus required>
-        <input type="submit" name="continue" class="horizontal-center" value="Pokračovat" id="submitButton" onclick="this.disabled=true; submitForm();">
+        <input type="submit" name="continue" value="Pokračovat" id="submitButton" onclick="this.disabled=true; submitForm();">
     </form>
     <p style="height: 100px;">  
         {{ exception }}
