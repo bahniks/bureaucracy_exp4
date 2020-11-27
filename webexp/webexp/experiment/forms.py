@@ -31,7 +31,7 @@ questions2 = """
 Soucit s těmi, kdo trpí, je nejdůležitější ctnost.
 Když zákonodárci tvoří zákony, nejdůležitějším principem by mělo být zajištění spravedlivého zacházení pro všechny.
 Jsem hrdý/ hrdá na historii své země.
-Respekt k autoritě by se měly naučit všechny děti.
+Všechny děti by se měly naučit respektu k autoritám.
 Lidé by neměli dělat nechutné věci, ani když jimi nikomu neškodí.
 Je lepší dělat dobro než zlo.
 Jednou z nejhorších věcí, které může člověk udělat, je zranit bezbranné zvíře.
@@ -53,7 +53,7 @@ Spravedlnost pro mě znamená, že každý dostane, co potřebuje, aby uspěl, i
 Obecně by lidé, kteří pracují víc, měli být placeni víc než jejich kolegové na stejné úrovni, i když to povede k nerovným výsledkům.
 Když děti soupeří ve sportovních disciplínách, myslím si, že je důležité ocenit vítěze za jejich úspěchy.
 Při rozdělování bonusu je podle mě spravedlivé, aby každý dostal podíl dle svých zásluh: lidé, co přispěli nejvíce, by měli dostat největší odměnu.
-Spravedlnost pro mě znamená, že by lidé měli být odměňováni podle velikosti svého přínosu.
+Spravedlnost pro mě znamená, že by lidé měli být odměňováni podle svého přínosu.
 Opravdu mě rozčiluje, když vidím jak někdo nedělá svůj spravedlivý díl práce.
 Když pracuji s ostatními, vždy mám přehled o tom, kdo přispěl víc a kdo méně.
 """.strip().split("\n")
