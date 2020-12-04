@@ -248,6 +248,7 @@ def delete(request):
     Participant.objects.all().delete() # pylint: disable=no-member
     Trial.objects.all().delete() # pylint: disable=no-member
     Log.objects.all().delete() # pylint: disable=no-member
+    Question.objects.all().delete() # pylint: disable=no-member
     return displayError(request, "It is done!")
 
 
