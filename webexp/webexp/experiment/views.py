@@ -23,8 +23,8 @@ charities = {
     "people_in_need": "Člověk v tísni",
     "red_cross": "Červený kříž"
     }
-manipulation = {"low_probability": "s pravděpodobností 1/9 ", "medium_probability": "s pravděpodobností 1/3 ", "high_probability": ""}
-manipulation2 = {"low_probability": "1800", "medium_probability": "600", "high_probability": "200"}
+manipulation = {"low_probability": "s pravděpodobností 10% ", "medium_probability": "s pravděpodobností 50% ", "high_probability": ""}
+manipulation2 = {"low_probability": "2000", "medium_probability": "400", "high_probability": "200"}
 
 @never_cache
 def manager(request, code = "", page = 0):
@@ -56,6 +56,7 @@ def manager(request, code = "", page = 0):
         except ObjectDoesNotExist:
             participant = Participant(participant_id = str(code))
             participant.condition = choice(["low_probability", "medium_probability", "high_probability"]) 
+            request.session["context"].update({"condition": participant.condition})  
             request.session["context"].update({"manipulation": manipulation[participant.condition]})  
             request.session["context"].update({"manipulation2": manipulation2[participant.condition]})
             participant.status = "started"
@@ -318,16 +319,16 @@ def downloadData(request, table, filename):
 
 sequence = [
     Frame("intro", intro, {}),
-    Frame("charity", charity, {}),
-    Frame("instructions1", intro, {}),
-    Frame("instructions2", intro, {}),
-    Frame("instructions3", intro, {}),
-    Frame("task", task, {"practice": 1}),
-    Frame("instructions4", intro, {}),
-    Frame("manipulation", intro, {}),
-    Frame("instructions5", intro, {}),
-    Frame("instructions6", intro, {}),
-    Frame("instructions7", intro, {}),
+    # Frame("charity", charity, {}),
+    # Frame("instructions1", intro, {}),
+    # Frame("instructions2", intro, {}),
+    # Frame("instructions3", intro, {}),
+    # Frame("task", task, {"practice": 1}),
+    # Frame("instructions4", intro, {}),
+    # Frame("manipulation", intro, {}),
+    # Frame("instructions5", intro, {}),
+    # Frame("instructions6", intro, {}),
+    # Frame("instructions7", intro, {}),
     Frame("instructions8", intro, {}),
     Frame("task", task, {"practice": 0}),
     Frame("account", account, {}),

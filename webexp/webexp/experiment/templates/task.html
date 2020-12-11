@@ -269,7 +269,9 @@
             // if color is NOT correct
             if(currentObject.color != potColors[key-1]) {
               mistakeStreak++;
-              charity -= charityLoss;
+              if(Math.random() < probabilityLoss) {
+                charity -= charityLoss;
+              }                
               if(isPractice) {
                 previousCorrect = false;
               }
@@ -458,10 +460,20 @@
         const initialCharity = 2000;
         const bribeProbability = 0.225;
         const bribeSizes = [30, 60, 90, 120, 150, 180];
-        const charityLoss = 200;
         const speed = 3;
         const sortReward = 5;
         const isPractice = parseInt("{{practice}}");
+        const condition = "{{condition}}";
+        if(condition == "low_probability") {
+          var charityLoss = 2000;
+          var probabilityLoss = 1/10;
+        } else if(condition == "medium_probability") {
+          var charityLoss = 400;
+          var probabilityLoss = 1/2;
+        } else if(condition == "high_probability") {
+          var charityLoss = 200;
+          var probabilityLoss = 1;
+        }
         const maxPauseLength = 2;
         const totalPauses = 3;
         const minimumHeight = 700;
