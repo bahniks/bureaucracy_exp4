@@ -6,7 +6,7 @@
         <p>V této cvičné verzi se úloha neukončí, i pokud obrazec zatřídíte čtyřikrát po sobě špatně, ale informace o špatném zatřídění se přesto bude na obrazovce objevovat.</p>
         <p>Poté, co budete připraveni, klikněte na “Pokračovat” a ukazováček, prostředníček a prsteníček položte na klávesy “J”, “K”, a “L”.</p>
         <p>Pozor – po kliknutí na “Pokračovat” úloha po krátkém odpočtu začne a na zatřídění každého obrázku máte jen několik vteřin – dokud obrázek neopustí obrazovku.</p>
-        <br><br>                       
+        <br><br>                          
         <form method="POST">
             {% csrf_token %}
             <input type="submit" name="continue" class="horizontal-center" value="Pokračovat" onclick="this.disabled=true; this.form.submit();">

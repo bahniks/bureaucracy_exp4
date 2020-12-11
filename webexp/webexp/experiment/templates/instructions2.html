@@ -4,10 +4,10 @@
         <p>
             Níže vidíte, jak vypadá obrazovka v průběhu úkolu spolu s popisky jednotlivých prvků.
             <br><br>
-            Až si obrázek prohlédnete, klikněte na “Pokračovat”.        
+            Až si obrázek prohlédnete, klikněte na “Pokračovat”.                   
         </p>      
         {% load static %}
-        <img src="{% static "experiment/screen0.png" %}" alt="Example screen 0" width="800px">
+        <img src="{% static "experiment/screenshot0.png" %}" alt="Example screen 0" width="800px">
         <form method="POST">
             {% csrf_token %}
             <input type="submit" name="continue" class="horizontal-center" value="Pokračovat" onclick="this.disabled=true; this.form.submit();">

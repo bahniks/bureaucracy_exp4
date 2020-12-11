@@ -23,11 +23,8 @@ charities = {
     "people_in_need": "Člověk v tísni",
     "red_cross": "Červený kříž"
     }
-reward = 5
-manipulation = {"low_range": "1-5", "medium_range": "2-8", "high_range": "5-20"}
-trials = 200
-manipulation2 = {"low_range": "200-1000", "medium_range": "400-1600", "high_range": "1000-4000"}
-
+manipulation = {"low_probability": "s pravděpodobností 1/9 ", "medium_probability": "s pravděpodobností 1/3 ", "high_probability": ""}
+manipulation2 = {"low_probability": "1800", "medium_probability": "600", "high_probability": "200"}
 
 @never_cache
 def manager(request, code = "", page = 0):
@@ -58,7 +55,7 @@ def manager(request, code = "", page = 0):
             participant = Participant.objects.get(participant_id = str(code)) # pylint: disable=no-member
         except ObjectDoesNotExist:
             participant = Participant(participant_id = str(code))
-            participant.condition = choice(["low_range", "medium_range", "high_range"]) 
+            participant.condition = choice(["low_probability", "medium_probability", "high_probability"]) 
             request.session["context"].update({"manipulation": manipulation[participant.condition]})  
             request.session["context"].update({"manipulation2": manipulation2[participant.condition]})
             participant.status = "started"
@@ -70,10 +67,6 @@ def manager(request, code = "", page = 0):
             # do not proceed to the next frame if returns True
             validCode.page += 1   
             validCode.save()
-        elif sequence[validCode.page].template == "mfq":
-            form = repeat
-            request.session["context"].update({"form": str(form)})
-            return render(request, "mfq.html", request.session["context"])
     else:
         if page != validCode.page:
             if validCode.page == len(sequence) - 1:
@@ -330,12 +323,12 @@ sequence = [
     Frame("instructions2", intro, {}),
     Frame("instructions3", intro, {}),
     Frame("task", task, {"practice": 1}),
-    Frame("instructions4", intro, {"trials": trials}),
-    Frame("manipulation", intro, {"reward": reward}),
+    Frame("instructions4", intro, {}),
+    Frame("manipulation", intro, {}),
     Frame("instructions5", intro, {}),
     Frame("instructions6", intro, {}),
     Frame("instructions7", intro, {}),
-    Frame("instructions8", intro, {"reward": reward}),
+    Frame("instructions8", intro, {}),
     Frame("task", task, {"practice": 0}),
     Frame("account", account, {}),
     Frame("ending", intro, {})
