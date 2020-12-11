@@ -22,7 +22,5 @@ urlpatterns = [
     path("download_codes/<str:filename>/", views.downloadCodes, name='download_codes_file'),
     path("download_logs/", views.downloadLogs, name='download_logs'),
     path("download_logs/<str:filename>/", views.downloadLogs, name='download_questions_file'),
-    path("download_questions/", views.downloadQuestions, name='download_logs'),
-    path("download_questions/<str:filename>/", views.downloadQuestions, name='download_questions_file'),
     path("summary/", views.summary, name='summary'),
 ]

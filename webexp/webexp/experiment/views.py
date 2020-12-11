@@ -6,8 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 
-from .forms import MFQ1, MFQ2, questions1, questions2, mfq1_instructions, mfq2_instructions, perception_instructions, Perception, questions3
-from .models import Participant, Trial, Code, Log, Question
+from .models import Participant, Trial, Code, Log
 
 from collections import namedtuple
 from math import ceil
@@ -183,37 +182,6 @@ def intro(request):
     pass
 
 
-def mfq1(request):
-    correction = 0
-    length = len(questions1)
-    return mfq(request, MFQ1, correction, length)
-
-def mfq2(request):
-    correction = len(questions1)
-    length = len(questions2)
-    return mfq(request, MFQ2, correction, length)
-
-def perception(request):
-    correction = len(questions1) + len(questions2)
-    length = len(questions3)
-    return mfq(request, Perception, correction, length)
-
-def mfq(request, form_class, correction, length):
-    form = form_class(request.POST)
-    if form.is_valid():
-        for i in range(length):
-            try:
-                qnum = i + 1 + correction
-                code = request.session["participantId"]
-                question = Question(cqID = code + str(qnum), code = code, question = qnum, answer = form.cleaned_data["question" + str(i + correction)])
-                question.save()
-            except:
-                pass
-        return False
-    else:
-        return form
-
-
 def displayError(request, text):
     localContext = {"error": text}
     template = loader.get_template('error.html')
@@ -248,7 +216,6 @@ def delete(request):
     Participant.objects.all().delete() # pylint: disable=no-member
     Trial.objects.all().delete() # pylint: disable=no-member
     Log.objects.all().delete() # pylint: disable=no-member
-    Question.objects.all().delete() # pylint: disable=no-member
     return displayError(request, "It is done!")
 
 
@@ -341,10 +308,6 @@ def downloadTrials(request, filename = "trials"):
     return downloadData(request, Trial, filename)
 
 @login_required(login_url='/admin/login/')
-def downloadQuestions(request, filename = "questions"):
-    return downloadData(request, Question, filename)
-
-@login_required(login_url='/admin/login/')
 def downloadLogs(request, filename = "logs"):
     return downloadData(request, Log, filename)
 
@@ -362,9 +325,6 @@ def downloadData(request, table, filename):
 
 sequence = [
     Frame("intro", intro, {}),
-    Frame("questionnaire", intro, {}),
-    Frame("mfq", mfq1, {"form": str(MFQ1().as_ul()), "scale_instructions": str(mfq1_instructions)}),
-    Frame("mfq", mfq2, {"form": str(MFQ2().as_ul()), "scale_instructions": str(mfq2_instructions)}),
     Frame("charity", charity, {}),
     Frame("instructions1", intro, {}),
     Frame("instructions2", intro, {}),
@@ -377,8 +337,6 @@ sequence = [
     Frame("instructions7", intro, {}),
     Frame("instructions8", intro, {"reward": reward}),
     Frame("task", task, {"practice": 0}),
-    Frame("questionnaire2", intro, {}),
-    Frame("mfq", perception, {"form": str(Perception().as_ul()), "scale_instructions": str(perception_instructions)}),
     Frame("account", account, {}),
     Frame("ending", intro, {})
     ]
