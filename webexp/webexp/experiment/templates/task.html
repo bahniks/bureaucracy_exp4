@@ -238,8 +238,12 @@
             return;
           }
           context.textAlign = "right";
-          context.fillText("Charitě: " + charity.toString(), window.innerWidth - hSize/10, vSize/5);
           context.fillText("Odměna: " + reward.toString(), window.innerWidth - hSize/10, window.innerHeight/2 + vSize/2);
+          if(recentlyLost & cumTime < 1000) {
+            context.fillStyle = "red";
+            context.font = Math.round(hSize/4).toString() + "px Helvetica";;
+          }          
+          context.fillText("Charitě: " + charity.toString(), window.innerWidth - hSize/10, vSize/5);          
         }
 
         var keys = ["j", "k", "l", "J", "K", "L"];
@@ -271,7 +275,10 @@
               mistakeStreak++;
               if(Math.random() < probabilityLoss) {
                 charity -= charityLoss;
-              }                
+                recentlyLost = true;
+              } else {
+                recentlyLost = false;
+              }
               if(isPractice) {
                 previousCorrect = false;
               }
@@ -493,6 +500,7 @@
         var paused = false;
         var pauseNumber = 0;
         var mistakeStreak = 0;
+        var recentlyLost = false;
 
         // initialization
         var canvas = document.getElementById('myCanvas');
