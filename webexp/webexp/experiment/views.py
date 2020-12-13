@@ -25,6 +25,8 @@ charities = {
     }
 manipulation = {"low_probability": "s pravděpodobností 10% ", "medium_probability": "s pravděpodobností 50% ", "high_probability": ""}
 manipulation2 = {"low_probability": "2000", "medium_probability": "400", "high_probability": "200"}
+screenshot2 = {"low_probability": "screenshot2_2000.png", "medium_probability": "screenshot2_400.png", "high_probability": "screenshot2_200.png"}
+screenshot2n = {"low_probability": "screenshot2_2000n.png", "medium_probability": "screenshot2_400n.png", "high_probability": "screenshot2_200n.png"}
 
 @never_cache
 def manager(request, code = "", page = 0):
@@ -59,6 +61,8 @@ def manager(request, code = "", page = 0):
             request.session["context"].update({"condition": participant.condition})  
             request.session["context"].update({"manipulation": manipulation[participant.condition]})  
             request.session["context"].update({"manipulation2": manipulation2[participant.condition]})
+            request.session["context"].update({"screenshot2": screenshot2[participant.condition]})
+            request.session["context"].update({"screenshot2n": screenshot2n[participant.condition]})
             participant.status = "started"
             participant.save()              
         if page != validCode.page:
@@ -66,7 +70,9 @@ def manager(request, code = "", page = 0):
         repeat = sequence[validCode.page].function(request)
         if not repeat:
             # do not proceed to the next frame if returns True
-            validCode.page += 1   
+            validCode.page += 1
+            if participant.condition == "high_probability" and sequence[validCode.page].template == "instructions6b":
+                validCode.page += 1
             validCode.save()
     else:
         if page != validCode.page:
@@ -327,6 +333,7 @@ sequence = [
     Frame("instructions4", intro, {}),
     Frame("instructions5", intro, {}),
     Frame("instructions6", intro, {}),
+    Frame("instructions6b", intro, {}),
     Frame("instructions7", intro, {}),
     Frame("instructions8", intro, {}),
     Frame("task", task, {"practice": 0}),

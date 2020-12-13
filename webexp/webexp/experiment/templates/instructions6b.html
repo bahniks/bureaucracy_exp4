@@ -6,7 +6,7 @@
             Až si obrázek prohlédnete, klikněte na “Pokračovat”.                                      
         </p>      
         {% load static %}
-        <img src="{% static 'experiment/' %}{{screenshot2}}" alt="Example screen 2" width="800px">
+        <img src="{% static 'experiment/' %}{{screenshot2n}}" alt="Example screen 2" width="800px">
         <form method="POST">
             {% csrf_token %}
             <input type="submit" name="continue" class="horizontal-center" value="Pokračovat" onclick="this.disabled=true; this.form.submit();">
